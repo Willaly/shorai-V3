@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Test de la serviette · shōrAI</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0b1020;
+    --panel:#ffffff;
+    --ink:#0f172a;
+    --muted:#64748b;
+    --line:#e2e8f0;
+    --line-soft:#f1f5f9;
+    --accent:#6366f1;
+    --accent-ink:#4f46e5;
+    --green:#10b981;
+    --green-bg:#ecfdf5;
+    --orange:#f59e0b;
+    --orange-bg:#fffbeb;
+    --red:#ef4444;
+    --red-bg:#fef2f2;
+    --shadow:0 1px 2px rgba(15,23,42,.06), 0 8px 24px rgba(15,23,42,.06);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #eef2ff 0%, transparent 60%),
+      radial-gradient(1000px 500px at 110% 10%, #fef3c7 0%, transparent 60%),
+      #f8fafc;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.45;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:32px 24px 56px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:24px;margin-bottom:24px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{
+    width:36px;height:36px;border-radius:10px;
+    background:linear-gradient(135deg,#0f172a,#4f46e5);
+    color:#fff;display:grid;place-items:center;font-weight:700;letter-spacing:.5px;
+    box-shadow:var(--shadow);
+  }
+  h1{font-size:22px;margin:0;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:13px;margin-top:2px}
+  .badge{
+    background:#eef2ff;color:#4338ca;border:1px solid #e0e7ff;
+    padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600
+  }
+
+  .grid{display:grid;grid-template-columns:1.1fr 1fr;gap:20px}
+  @media (max-width: 900px){ .grid{grid-template-columns:1fr} }
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px;
+    box-shadow:var(--shadow);
+  }
+  .card h2{margin:0 0 4px;font-size:15px;letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
+  .card h3{margin:0 0 14px;font-size:18px}
+
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:13px;color:var(--muted);font-weight:500}
+  .field .hint{font-size:11px;color:#94a3b8}
+  .input{
+    display:flex;align-items:center;border:1px solid var(--line);
+    border-radius:10px;background:#fff;transition:border-color .15s;
+    overflow:hidden;
+  }
+  .input:focus-within{border-color:var(--accent)}
+  .input input{
+    border:0;outline:0;flex:1;padding:10px 12px;font-size:15px;font-variant-numeric:tabular-nums;
+    background:transparent;color:var(--ink);width:100%;
+  }
+  .input .suffix{padding:0 12px;color:var(--muted);font-size:13px;border-left:1px solid var(--line-soft);align-self:stretch;display:flex;align-items:center;background:#f8fafc}
+
+  .toggle{margin-top:18px;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;color:var(--muted);font-size:13px}
+  .toggle input{accent-color:var(--accent)}
+  .advanced{display:none;margin-top:14px;padding-top:14px;border-top:1px dashed var(--line)}
+  .advanced.open{display:block}
+
+  /* Result panel */
+  .verdict{
+    display:flex;align-items:center;gap:14px;
+    padding:16px;border-radius:12px;border:1px solid var(--line);background:#fff;
+  }
+  .dot{width:14px;height:14px;border-radius:50%}
+  .verdict.green{background:var(--green-bg);border-color:#a7f3d0}
+  .verdict.green .dot{background:var(--green)}
+  .verdict.orange{background:var(--orange-bg);border-color:#fde68a}
+  .verdict.orange .dot{background:var(--orange)}
+  .verdict.red{background:var(--red-bg);border-color:#fecaca}
+  .verdict.red .dot{background:var(--red)}
+  .verdict .title{font-weight:700;font-size:15px}
+  .verdict .desc{color:var(--muted);font-size:13px;margin-top:2px}
+
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  .kpi{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+  .kpi .lbl{font-size:11px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em}
+  .kpi .val{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:4px;letter-spacing:-.01em}
+  .kpi .sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+  button{
+    border:1px solid var(--line);background:#fff;color:var(--ink);
+    padding:10px 14px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;
+    transition:all .15s;
+  }
+  button:hover{border-color:#cbd5e1;transform:translateY(-1px)}
+  button.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+  button.primary:hover{background:#1e293b;border-color:#1e293b}
+  button.ghost{background:transparent}
+
+  /* Chart */
+  .chart-wrap{position:relative;height:340px}
+
+  /* Scenarios table */
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+  th{font-size:11px;text-transform:uppercase;color:var(--muted);letter-spacing:.06em;font-weight:600;background:#f8fafc}
+  tr:last-child td{border-bottom:0}
+  td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:600}
+  .pill.green{background:var(--green-bg);color:#065f46}
+  .pill.orange{background:var(--orange-bg);color:#92400e}
+  .pill.red{background:var(--red-bg);color:#991b1b}
+  .icon-btn{
+    background:transparent;border:0;padding:4px 8px;cursor:pointer;color:var(--muted);font-size:13px;
+  }
+  .icon-btn:hover{color:var(--ink)}
+  .empty{color:var(--muted);font-size:13px;padding:20px;text-align:center;border:1px dashed var(--line);border-radius:10px}
+
+  details.formula{margin-top:24px;border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fff}
+  details.formula summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--ink)}
+  details.formula p, details.formula li{font-size:13px;color:var(--muted);line-height:1.6}
+  details.formula code{background:#f1f5f9;padding:2px 6px;border-radius:4px;font-size:12px}
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:#0f172a;color:#fff;padding:10px 16px;border-radius:10px;font-size:13px;
+    opacity:0;transition:all .25s;pointer-events:none;z-index:100;box-shadow:var(--shadow);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer{margin-top:32px;text-align:center;color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <img src="/logo_shorai.png" alt="shōrAI" style="height:36px;width:auto" />
+      <div>
+        <h1>Test de la serviette</h1>
+        <div class="sub">Calcul rapide du payback d'une automatisation · par shōrAI Consulting</div>
+      </div>
+    </div>
+    <span class="badge">Live · v1.0</span>
+  </header>
+
+  <div class="grid">
+    <!-- INPUTS -->
+    <section class="card">
+      <h2>Paramètres</h2>
+      <h3>1. Combien on gagne par semaine ?</h3>
+
+      <div class="row">
+        <div class="field">
+          <label>Temps gagné par occurrence</label>
+          <div class="input"><input id="minutes" type="number" min="0" step="1" value="10" />
+            <span class="suffix">min</span></div>
+        </div>
+        <div class="field">
+          <label>Fréquence par semaine</label>
+          <div class="input"><input id="frequency" type="number" min="0" step="1" value="5" />
+            <span class="suffix">×/sem.</span></div>
+        </div>
+        <div class="field">
+          <label>Personnes concernées</label>
+          <div class="input"><input id="people" type="number" min="0" step="1" value="2" />
+            <span class="suffix">pers.</span></div>
+        </div>
+        <div class="field">
+          <label>Coût horaire (chargé)</label>
+          <div class="input"><input id="hourly" type="number" min="0" step="1" value="50" />
+            <span class="suffix">€/h</span></div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:22px">2. Combien ça coûte à construire ?</h3>
+      <div class="row">
+        <div class="field">
+          <label>Coût de build (one-shot)</label>
+          <div class="input"><input id="build" type="number" min="0" step="50" value="3000" />
+            <span class="suffix">€</span></div>
+          <span class="hint">ex : 5j × 600€ = 3000€</span>
+        </div>
+        <div class="field">
+          <label>Nom du scénario</label>
+          <div class="input"><input id="name" type="text" placeholder="Automatisation X" value="Scénario A" /></div>
+        </div>
+      </div>
+
+      <label class="toggle">
+        <input type="checkbox" id="advToggle" />
+        <span>Affiner (réalisme)</span>
+      </label>
+      <div class="advanced" id="advanced">
+        <div class="row">
+          <div class="field">
+            <label>Taux de réalisation du gain</label>
+            <div class="input"><input id="realization" type="number" min="0" max="100" step="5" value="100" />
+              <span class="suffix">%</span></div>
+            <span class="hint">en pratique 50–80% (effet Parkinson, switching cost)</span>
+          </div>
+          <div class="field">
+            <label>Maintenance annuelle</label>
+            <div class="input"><input id="maint" type="number" min="0" step="100" value="0" />
+              <span class="suffix">€/an</span></div>
+            <span class="hint">corrections, évolutions, dérives</span>
+          </div>
+          <div class="field">
+            <label>Durée de vie du process</label>
+            <div class="input"><input id="lifespan" type="number" min="1" step="1" value="24" />
+              <span class="suffix">mois</span></div>
+            <span class="hint">au-delà : process probablement obsolète</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" id="addBtn">+ Ajouter au comparatif</button>
+        <button class="ghost" id="copyBtn">Copier le résumé</button>
+        <button class="ghost" id="resetBtn">Réinitialiser</button>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="card">
+      <h2>Verdict</h2>
+      <h3 id="resName">Scénario A</h3>
+
+      <div id="verdict" class="verdict orange">
+        <div class="dot"></div>
+        <div>
+          <div class="title" id="vTitle">— </div>
+          <div class="desc" id="vDesc">Renseignez les paramètres pour obtenir un verdict.</div>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi">
+          <div class="lbl">Gain / semaine</div>
+          <div class="val" id="kGain">—</div>
+          <div class="sub" id="kGainSub">€/sem.</div>
+        </div>
+        <div class="kpi">
+          <div class="lbl">Payback</div>
+          <div class="val" id="kPayback">—</div>
+          <div class="sub" id="kPaybackSub">semaines</div>
+        </div>
+        <div class="kpi">
+          <div class="lbl">Gain net 1 an</div>
+          <div class="val" id="kNet">—</div>
+          <div class="sub" id="kNetSub">€ après 12 mois</div>
+        </div>
+      </div>
+
+      <div style="margin-top:18px;padding:12px 14px;background:#f8fafc;border-radius:10px;border:1px solid var(--line-soft);font-size:13px;color:var(--muted)">
+        <strong style="color:var(--ink)">Règle enfantine</strong> — vert ≤ 12 sem. · orange 13–26 sem. · rouge &gt; 26 sem.
+      </div>
+    </section>
+  </div>
+
+  <!-- CHART -->
+  <section class="card" style="margin-top:20px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+      <div>
+        <h2>Graphique</h2>
+        <h3>Cumul net (€) sur le temps</h3>
+      </div>
+      <div style="font-size:12px;color:var(--muted);max-width:340px;text-align:right">
+        Chaque courbe part à <code style="background:#f1f5f9;padding:1px 4px;border-radius:3px">−coût de build</code> et croît du gain hebdo. Le break-even = passage à zéro.
+      </div>
+    </div>
+    <div class="chart-wrap"><canvas id="chart"></canvas></div>
+  </section>
+
+  <!-- SCENARIOS TABLE -->
+  <section class="card" style="margin-top:20px">
+    <h2>Comparatif des scénarios</h2>
+    <h3>Trié par payback croissant</h3>
+    <div id="tableWrap"></div>
+  </section>
+
+  <details class="formula">
+    <summary>Formule complète & limites</summary>
+    <p>
+      <strong>Gain hebdo</strong> = (minutes / 60) × fréquence × personnes × coût horaire × taux de réalisation.<br>
+      <strong>Coût hebdo</strong> = maintenance / 52.<br>
+      <strong>Gain net hebdo</strong> = gain hebdo − coût hebdo.<br>
+      <strong>Payback</strong> = coût de build / gain net hebdo (en semaines).<br>
+      <strong>Verdict</strong> : rouge si payback &gt; durée de vie, sinon ≤ 12 sem. = vert, ≤ 26 sem. = orange, sinon rouge.
+    </p>
+    <p style="margin-top:10px"><strong>Limites à garder en tête</strong> : la formule ignore le risque d'exécution (le build peut dépasser), les coûts de change management, et l'opportunité (qu'aurait-on fait d'autre avec ce budget ?). Le « taux de réalisation » est une louche — à calibrer selon votre contexte.</p>
+  </details>
+
+  <footer>Test de la serviette · shōrAI Consulting · une heuristique simple pour ne pas investir dans ce qui ne le mérite pas.</footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const fmt = (n, d=0) => isFinite(n) ? n.toLocaleString('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}) : '—';
+  const fmtEUR = n => isFinite(n) ? n.toLocaleString('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}) : '—';
+
+  const inputs = ['minutes','frequency','people','hourly','build','name','realization','maint','lifespan'];
+  inputs.forEach(id => $(id).addEventListener('input', recompute));
+  $('advToggle').addEventListener('change', e => $('advanced').classList.toggle('open', e.target.checked));
+  $('addBtn').addEventListener('click', addScenario);
+  $('copyBtn').addEventListener('click', copySummary);
+  $('resetBtn').addEventListener('click', () => {
+    const defaults = {minutes:10,frequency:5,people:2,hourly:50,build:3000,name:'Scénario A',realization:70,maint:0,lifespan:24};
+    Object.entries(defaults).forEach(([k,v])=>$(k).value=v);
+    recompute();
+  });
+
+  // ----- core math -----
+  function compute(p) {
+    const minutes = +p.minutes||0, frequency = +p.frequency||0, people = +p.people||0;
+    const hourly = +p.hourly||0, build = +p.build||0;
+    const realization = (+p.realization||100) / 100;
+    const maint = +p.maint||0, lifespan = +p.lifespan||24;
+    const grossWeek = (minutes/60) * frequency * people * hourly * realization;
+    const maintWeek = maint / 52;
+    const netWeek = grossWeek - maintWeek;
+    const payback = netWeek > 0 ? build / netWeek : Infinity;
+    const lifespanWeeks = lifespan * (52/12);
+    const net1y = netWeek * 52 - build;
+    let verdict, vTitle, vDesc;
+    if (netWeek <= 0) {
+      verdict='red'; vTitle='Stop — pas de gain net';
+      vDesc='Le gain hebdo ne couvre même pas la maintenance. Inutile d\'aller plus loin.';
+    } else if (payback > lifespanWeeks) {
+      verdict='red'; vTitle='Stop — payback > durée de vie';
+      vDesc=`Rentabilisé en ${fmt(payback,1)} sem. mais le process ne survit que ${fmt(lifespanWeeks,0)} sem. Le ROI ne sera jamais atteint.`;
+    } else if (payback <= 12) {
+      verdict='green'; vTitle='Go — rentable rapidement';
+      vDesc=`Rentabilisé en ${fmt(payback,1)} sem. (${fmt(payback/4.33,1)} mois). Le risque que le process change avant est faible.`;
+    } else if (payback <= 26) {
+      verdict='orange'; vTitle='À discuter';
+      vDesc=`Rentabilisé en ${fmt(payback,1)} sem. (${fmt(payback/4.33,1)} mois). Vérifier la stabilité du process et l'urgence réelle.`;
+    } else {
+      verdict='red'; vTitle='Probablement non — trop long';
+      vDesc=`Rentabilisé en ${fmt(payback,1)} sem. (${fmt(payback/4.33,1)} mois). D'ici là, le process aura sans doute changé.`;
+    }
+    return {grossWeek, maintWeek, netWeek, payback, lifespanWeeks, net1y, build, verdict, vTitle, vDesc};
+  }
+
+  function readInputs() {
+    return {
+      name: $('name').value || 'Sans nom',
+      minutes:$('minutes').value, frequency:$('frequency').value, people:$('people').value,
+      hourly:$('hourly').value, build:$('build').value,
+      realization:$('realization').value, maint:$('maint').value, lifespan:$('lifespan').value
+    };
+  }
+
+  // ----- live result -----
+  function recompute() {
+    const p = readInputs();
+    const r = compute(p);
+    $('resName').textContent = p.name;
+    const v = $('verdict');
+    v.classList.remove('green','orange','red'); v.classList.add(r.verdict);
+    $('vTitle').textContent = r.vTitle;
+    $('vDesc').textContent = r.vDesc;
+    $('kGain').textContent = fmtEUR(r.netWeek);
+    $('kGainSub').textContent = r.maintWeek>0 ? `net (gain ${fmtEUR(r.grossWeek)} − maint. ${fmtEUR(r.maintWeek)})` : '€/semaine';
+    $('kPayback').textContent = isFinite(r.payback) ? `${fmt(r.payback,1)} sem.` : '∞';
+    $('kPaybackSub').textContent = isFinite(r.payback) ? `≈ ${fmt(r.payback/4.33,1)} mois` : 'jamais rentabilisé';
+    $('kNet').textContent = fmtEUR(r.net1y);
+    $('kNetSub').textContent = r.net1y>=0 ? 'bénéfice après 12 mois' : 'encore en perte à 12 mois';
+    drawChart();
+    renderTable();
+  }
+
+  // ----- scenarios -----
+  let scenarios = [];
+  function addScenario() {
+    const p = readInputs();
+    scenarios.push({...p, id: Date.now()+Math.random()});
+    toast('Scénario ajouté au comparatif');
+    drawChart(); renderTable();
+  }
+  function removeScenario(id) {
+    scenarios = scenarios.filter(s => s.id !== id);
+    drawChart(); renderTable();
+  }
+
+  function renderTable() {
+    const wrap = $('tableWrap');
+    if (!scenarios.length) {
+      wrap.innerHTML = '<div class="empty">Aucun scénario sauvegardé. Cliquez « + Ajouter au comparatif » pour comparer plusieurs initiatives.</div>';
+      return;
+    }
+    const rows = scenarios.map(s => ({s, r: compute(s)}))
+      .sort((a,b)=>a.r.payback - b.r.payback);
+    const html = `
+      <table>
+        <thead><tr>
+          <th>Scénario</th>
+          <th class="num">Gain net / sem.</th>
+          <th class="num">Coût build</th>
+          <th class="num">Payback</th>
+          <th class="num">Gain net 1 an</th>
+          <th>Verdict</th>
+          <th></th>
+        </tr></thead>
+        <tbody>
+          ${rows.map(({s,r})=>`
+            <tr>
+              <td>${escapeHtml(s.name)}</td>
+              <td class="num">${fmtEUR(r.netWeek)}</td>
+              <td class="num">${fmtEUR(+s.build)}</td>
+              <td class="num">${isFinite(r.payback)? fmt(r.payback,1)+' sem.' : '∞'}</td>
+              <td class="num">${fmtEUR(r.net1y)}</td>
+              <td><span class="pill ${r.verdict}">${verdictLabel(r.verdict)}</span></td>
+              <td><button class="icon-btn" data-id="${s.id}">✕</button></td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+    wrap.innerHTML = html;
+    wrap.querySelectorAll('.icon-btn').forEach(b => b.addEventListener('click', e => {
+      const id = parseFloat(e.target.getAttribute('data-id'));
+      removeScenario(id);
+    }));
+  }
+
+  function verdictLabel(v) { return v==='green'?'Go':v==='orange'?'À discuter':'Stop'; }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // ----- chart -----
+  let chart;
+  function drawChart() {
+    const current = readInputs();
+    const all = [...scenarios, {...current, id:'__current__', _current:true}];
+    const horizons = all.map(s => {
+      const r = compute(s);
+      return Math.max(52, Math.ceil((isFinite(r.payback)?r.payback:52) * 1.5));
+    });
+    const horizon = Math.min(Math.max(...horizons, 52), 156); // cap 3y
+    const labels = Array.from({length: horizon+1}, (_,i)=>i);
+    const palette = ['#4f46e5','#10b981','#f59e0b','#ef4444','#0ea5e9','#a855f7','#ec4899','#14b8a6'];
+    const datasets = all.map((s, i) => {
+      const r = compute(s);
+      const data = labels.map(w => r.netWeek*w - r.build);
+      const isCurrent = s._current;
+      return {
+        label: (isCurrent?'▶ ':'') + (s.name||'(en cours)'),
+        data,
+        borderColor: isCurrent ? '#0f172a' : palette[i % palette.length],
+        backgroundColor: 'transparent',
+        borderWidth: isCurrent ? 3 : 2,
+        borderDash: isCurrent ? [] : [],
+        pointRadius:0, pointHoverRadius:4, tension:.05
+      };
+    });
+    const ctx = $('chart').getContext('2d');
+    if (chart) chart.destroy();
+    chart = new Chart(ctx, {
+      type:'line',
+      data:{labels, datasets},
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        interaction:{mode:'index', intersect:false},
+        plugins:{
+          legend:{position:'bottom', labels:{boxWidth:12, boxHeight:12, font:{size:12}}},
+          tooltip:{
+            callbacks:{
+              title: items => `Semaine ${items[0].label}`,
+              label: ctx => `${ctx.dataset.label}: ${fmtEUR(ctx.parsed.y)}`
+            }
+          }
+        },
+        scales:{
+          x:{ title:{display:true,text:'Semaines'}, grid:{color:'#f1f5f9'} },
+          y:{
+            title:{display:true,text:'Cumul net (€)'},
+            grid:{color:'#f1f5f9'},
+            ticks:{ callback: v => fmtEUR(v) }
+          }
+        }
+      },
+      plugins:[{
+        id:'zeroLine',
+        afterDraw(c){
+          const y = c.scales.y.getPixelForValue(0);
+          const {left,right} = c.chartArea;
+          const ctx = c.ctx;
+          ctx.save();
+          ctx.strokeStyle = '#94a3b8'; ctx.setLineDash([4,4]); ctx.lineWidth=1;
+          ctx.beginPath(); ctx.moveTo(left,y); ctx.lineTo(right,y); ctx.stroke();
+          ctx.restore();
+        }
+      }]
+    });
+  }
+
+  // ----- export -----
+  function copySummary() {
+    const p = readInputs();
+    const r = compute(p);
+    const txt =
+`Test de la serviette — ${p.name}
+Hypothèses : ${p.minutes} min × ${p.frequency}/sem × ${p.people} pers × ${p.hourly}€/h${(+p.realization!==100)?` (réalisation ${p.realization}%)`:''}
+Coût de build : ${fmtEUR(+p.build)}${(+p.maint>0)?` · maintenance ${fmtEUR(+p.maint)}/an`:''}
+→ Gain net hebdo : ${fmtEUR(r.netWeek)}
+→ Payback : ${isFinite(r.payback)? fmt(r.payback,1)+' semaines ('+fmt(r.payback/4.33,1)+' mois)' : 'jamais'}
+→ Gain net à 12 mois : ${fmtEUR(r.net1y)}
+→ Verdict : ${r.vTitle}`;
+    navigator.clipboard.writeText(txt).then(
+      ()=>toast('Résumé copié dans le presse-papier'),
+      ()=>toast('Impossible de copier — sélectionnez et copiez manuellement')
+    );
+  }
+
+  function toast(msg) {
+    const t = $('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove('show'), 2200);
+  }
+
+  recompute();
+})();
+</script>
+</body>
+</html>
