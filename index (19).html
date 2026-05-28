@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="shōrAI Consulting — Conseil IA opérationnel pour PME & ETI. Audit, stratégie, déploiement. Résultats concrets, zéro zone grise.">
+<meta name="theme-color" content="#3B5BDB">
+<meta property="og:title" content="shōrAI Consulting — Conseil IA opérationnel pour PME & ETI">
+<meta property="og:description" content="L'IA ne remplace pas votre métier. Elle l'amplifie. Diagnostic, cadrage stratégique et solutions IA sur mesure.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.shorai-group.com">
+<link rel="icon" type="image/png" href="logo con shōrAI 将来 color.png">
+<title>shōrAI Consulting — Conseil IA opérationnel pour PME & ETI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,700;0,8..60,900;1,8..60,400;1,8..60,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+:root{
+--blue:#3B5BDB;--blue-dk:#2B4BC8;--blue-lt:#EDF2FF;
+--orange:#E8790C;--red:#E03131;--purple:#7048C6;
+--grad:linear-gradient(135deg,#E8790C 0%,#E03131 35%,#7048C6 70%,#3B5BDB 100%);
+--ink:#1a1a2e;--body:#4a4a5a;--muted:#8b8b9a;
+--border:#e9ecef;--bg:#fff;--bg-alt:#f8f9fa;--bg-diag:#f1f3f5;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'DM Sans',system-ui,sans-serif;color:var(--ink);background:var(--bg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::selection{background:var(--blue);color:#fff}
+a{color:inherit;text-decoration:none}
+.serif{font-family:'Source Serif 4',Georgia,serif}
+.grad-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+img{max-width:100%;display:block}
+
+/* Reveal animation */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1)}
+.rv.vis{opacity:1;transform:translateY(0)}
+
+/* Layout */
+.sec{padding:96px 24px}
+.ctn{max-width:1120px;margin:0 auto;width:100%}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:24px}
+.flex-c{display:flex;justify-content:center;flex-wrap:wrap;gap:14px}
+.text-c{text-align:center}
+
+/* Cards */
+.card{padding:32px;border-radius:16px;border:1px solid var(--border);background:#fff;transition:box-shadow .3s,transform .3s}
+.card:hover{box-shadow:0 4px 20px rgba(0,0,0,.05);transform:translateY(-3px)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:600;font-size:15px;font-family:'DM Sans',sans-serif;transition:background .2s,transform .15s,border-color .2s;cursor:pointer;border:none}
+.btn-blue{background:var(--blue);color:#fff;box-shadow:0 2px 12px rgba(59,91,219,.25)}
+.btn-blue:hover{background:var(--blue-dk);transform:translateY(-1px)}
+.btn-outline{border:1.5px solid var(--border);background:transparent;color:var(--ink)}
+.btn-outline:hover{border-color:var(--blue)}
+.btn-sm{padding:12px 20px;font-size:14px;border-radius:10px}
+
+/* Badge */
+.badge{display:inline-flex;align-items:center;gap:8px;padding:6px 18px;border-radius:100px;border:1px solid var(--border);background:#fff;font-size:13px;font-weight:500;color:var(--body)}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:var(--blue)}
+
+/* Section title */
+.sec-title{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;line-height:1.15;margin-bottom:16px}
+.sec-sub{font-size:16px;color:var(--body);max-width:580px;margin:0 auto;line-height:1.7}
+
+/* Responsive */
+@media(max-width:860px){.desk{display:none!important}}
+@media(min-width:861px){.mob{display:none!important}}
+@media(max-width:640px){.sec{padding:64px 16px}}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:68px;backdrop-filter:blur(12px);transition:all .3s;border-bottom:1px solid transparent}
+.nav.scrolled{background:rgba(255,255,255,.95);border-bottom-color:var(--border)}
+.nav:not(.scrolled){background:rgba(255,255,255,.8)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:100%;padding:0 24px;max-width:1120px;margin:0 auto}
+.nav-link{padding:8px 16px;font-size:14px;font-weight:500;color:var(--ink);border-radius:6px;transition:background .2s}
+.nav-link:hover{background:var(--bg-alt)}
+.nav-logo img{height:48px;width:auto}
+
+/* Drawer */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:198;opacity:0;pointer-events:none;transition:opacity .3s}
+.overlay.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(320px,85vw);background:#fff;z-index:199;padding:80px 28px 28px;transform:translateX(100%);transition:transform .35s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;gap:4px}
+.drawer.open{transform:translateX(0);box-shadow:-4px 0 24px rgba(0,0,0,.08)}
+.drawer-link{padding:16px 0;font-size:17px;font-weight:500;border-bottom:1px solid var(--border)}
+.drawer-close{position:absolute;top:20px;right:20px;background:none;border:none;cursor:pointer}
+
+/* Hero */
+.hero{padding-top:160px;padding-bottom:100px;text-align:center;background:linear-gradient(180deg,var(--bg-alt) 0%,var(--bg) 100%)}
+.hero h1{font-size:clamp(2.2rem,5.5vw,3.8rem);line-height:1.1;font-weight:900;max-width:780px;margin:0 auto 28px;letter-spacing:-.02em}
+.hero p.sub{font-size:clamp(1rem,2vw,1.15rem);line-height:1.75;color:var(--body);max-width:620px;margin:0 auto 40px}
+.hero .trust{font-size:13px;color:var(--muted)}
+
+/* Offer card with accent border on hover */
+.offer-card{display:flex;flex-direction:column}
+.offer-card .offer-cta{margin-top:20px;padding:12px 20px;border-radius:10px;font-size:14px;font-weight:600;text-align:center;display:block;transition:all .2s}
+
+/* Inclus/Exclus */
+.incl-card{border:1px solid var(--border);background:#fff}
+.excl-card{border:1px solid #fce4e4;background:#fffbfb}
+
+/* FAQ */
+.faq-item{border-radius:12px;border:1px solid var(--border);margin-bottom:8px;background:#fff;overflow:hidden}
+.faq-btn{width:100%;padding:18px 20px;display:flex;justify-content:space-between;align-items:center;background:none;border:none;cursor:pointer;font-size:15px;font-weight:600;color:var(--ink);text-align:left;font-family:'DM Sans',sans-serif;line-height:1.4}
+.faq-btn svg{flex-shrink:0;margin-left:12px;transition:transform .3s}
+.faq-btn.open svg{transform:rotate(180deg)}
+.faq-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-body p{padding:0 20px 18px;font-size:14px;line-height:1.7;color:var(--body)}
+
+/* Contact form */
+.form-input{width:100%;padding:14px 16px;border-radius:10px;border:1.5px solid var(--border);font-size:15px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;background:var(--bg-alt)}
+.form-input:focus{border-color:var(--blue)}
+.form-label{font-size:14px;font-weight:600;margin-bottom:6px;display:block}
+
+/* Contact selector */
+.contact-sel{flex:1;min-width:150px;padding:12px 16px;border-radius:10px;cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;transition:all .2s;border:1.5px solid var(--border);background:transparent}
+.contact-sel.active{border:2px solid var(--blue);background:var(--blue-lt)}
+.contact-sel .name{font-weight:600;font-size:14px}
+.contact-sel.active .name{color:var(--blue)}
+
+/* Footer */
+.footer{background:#fff;border-top:1px solid var(--border);padding:40px 24px 28px}
+.footer-label{font-weight:700;color:var(--ink);margin-bottom:8px;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+
+/* Quiz */
+.quiz-opt{padding:16px 20px;border-radius:12px;border:1px solid var(--border);background:var(--bg-alt);font-size:15px;color:var(--ink);cursor:pointer;text-align:left;font-family:'DM Sans',sans-serif;font-weight:500;transition:all .2s;width:100%}
+.quiz-opt:hover{border-color:var(--blue);background:var(--blue-lt)}
+
+/* Check/X items */
+.chk-item{display:flex;gap:10px;align-items:flex-start;margin-bottom:14px;font-size:14px;line-height:1.6;color:var(--body)}
+.chk-item svg{flex-shrink:0;margin-top:2px}
+
+/* Livrable chips */
+.chip{display:inline-flex;align-items:center;gap:10px;padding:12px 20px;border-radius:12px;border:1px solid var(--border);background:#fff;font-size:14px;font-weight:500;color:var(--ink)}
+
+/* Progress bar */
+.prog-bg{height:4px;border-radius:2px;background:var(--bg-diag);margin-bottom:28px}
+.prog-fill{height:100%;background:var(--blue);border-radius:2px;transition:width .4s}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ NAV ═══════════════ -->
+<nav class="nav" id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo"><img src=" logo con shōrAI 将来 color.png " alt="shōrAI 将来"></a>
+    <div class="desk" style="display:flex;align-items:center;gap:6px">
+      <a href="#methode" class="nav-link">Méthode</a>
+      <a href="#offres" class="nav-link">Offres</a>
+      <a href="#diagnostic" class="nav-link">Pré-diagnostic</a>
+      <a href="#contact" class="nav-link">Contact</a>
+      <a href="#contact" class="btn btn-blue btn-sm" style="margin-left:12px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Réserver
+      </a>
+    </div>
+    <button class="mob" onclick="toggleDrawer()" style="background:none;border:none;cursor:pointer;color:var(--ink)">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+    </button>
+  </div>
+</nav>
+<div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
+<div class="drawer" id="drawer">
+  <button class="drawer-close" onclick="toggleDrawer()">
+    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <a href="#methode" class="drawer-link" onclick="toggleDrawer()">Méthode</a>
+  <a href="#offres" class="drawer-link" onclick="toggleDrawer()">Offres</a>
+  <a href="#diagnostic" class="drawer-link" onclick="toggleDrawer()">Pré-diagnostic</a>
+  <a href="#contact" class="drawer-link" onclick="toggleDrawer()">Contact</a>
+  <a href="#contact" class="btn btn-blue" onclick="toggleDrawer()" style="margin-top:20px;justify-content:center">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    Réserver 30 min — gratuit
+  </a>
+</div>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero">
+  <div class="ctn rv" style="padding:0 24px">
+    <div class="badge" style="margin-bottom:36px"><span class="badge-dot"></span>Consulting IA · Opérationnel · Sur-mesure</div>
+    <h1 class="serif">L'IA ne remplace pas votre métier. <span class="grad-text serif" style="font-style:italic">Elle l'amplifie.</span></h1>
+    <p class="sub">shōrAI identifie en 72 h les cas d'usage IA à fort ROI dans votre organisation — avec une méthode structurée, un Go/NoGo clair, et zéro zone grise.</p>
+    <div class="flex-c" style="margin-bottom:24px">
+      <a href="#contact" class="btn btn-blue">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Réserver 30 min — gratuit
+      </a>
+      <a href="#diagnostic" class="btn btn-outline">Pré-diagnostic gratuit
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+    <p class="trust">Sans engagement · Résultat immédiat · Confidentialité assurée</p>
+  </div>
+</section>
+
+<!-- ═══════════════ POURQUOI 90% ÉCHOUENT ═══════════════ -->
+<section class="sec" style="background:var(--bg)">
+  <div class="ctn">
+    <div class="rv text-c" style="margin-bottom:56px">
+      <h2 class="serif sec-title">Pourquoi <span class="grad-text">90 %</span> des projets IA échouent</h2>
+      <p class="sec-sub">Ce n'est pas un problème de technologie. C'est un problème de méthode.</p>
+    </div>
+    <div class="grid2">
+      <div class="card rv">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="1.8" style="margin-bottom:18px"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01"/></svg>
+        <h3 style="font-size:17px;font-weight:700;margin-bottom:10px;line-height:1.35">Vous avez une Ferrari… sans chaîne.</h3>
+        <p style="font-size:14px;line-height:1.7;color:var(--body)">Les outils IA existent, mais vos process internes ne sont pas prêts à les exploiter. Résultat : investissement sans retour.</p>
+      </div>
+      <div class="card rv">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" style="margin-bottom:18px"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <h3 style="font-size:17px;font-weight:700;margin-bottom:10px;line-height:1.35">L'IA amplifie l'existant — le bon comme le mauvais.</h3>
+        <p style="font-size:14px;line-height:1.7;color:var(--body)">Sans diagnostic, automatiser un process bancal ne fait qu'accélérer le chaos. Il faut d'abord comprendre, puis outiller.</p>
+      </div>
+      <div class="card rv">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.8" style="margin-bottom:18px"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <h3 style="font-size:17px;font-weight:700;margin-bottom:10px;line-height:1.35">Le marché n'attend pas.</h3>
+        <p style="font-size:14px;line-height:1.7;color:var(--body)">Vos concurrents structurent déjà leurs cas d'usage IA. Chaque trimestre perdu creuse un écart difficile à rattraper.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ MÉTHODE shōrAI ═══════════════ -->
+<section id="methode" class="sec" style="background:var(--bg-alt)">
+  <div class="ctn">
+    <div class="rv text-c" style="margin-bottom:56px">
+      <h2 class="serif sec-title">La méthode <span class="grad-text serif" style="font-style:italic">shōrAI</span></h2>
+      <p class="sec-sub">Structurée, transparente, orientée résultat. Pas de slides PowerPoint qui dorment dans un tiroir.</p>
+    </div>
+    <div class="grid2" style="margin-bottom:48px">
+      <div class="card text-c">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" style="margin:0 auto 18px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        <h3 style="font-size:17px;font-weight:700;margin-bottom:10px">Cadrage stratégique</h3>
+        <p style="font-size:14px;line-height:1.7;color:var(--body)">Identification des cas d'usage à plus fort ROI, alignés sur vos priorités business.</p>
+      </div>
+      <div class="card text-c">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" style="margin:0 auto 18px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+        <h3 style="font-size:17px;font-weight:700;margin-bottom:10px">Go / NoGo factuel</h3>
+        <p style="font-size:14px;line-height:1.7;color:var(--body)">Chaque cas d'usage est évalué sur faisabilité, données, risques et gain attendu. Pas d'ambiguïté.</p>
+      </div>
+      <div class="card text-c">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8" style="margin:0 auto 18px"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>
+        <h3 style="font-size:17px;font-weight:700;margin-bottom:10px">Livrables actionnables</h3>
+        <p style="font-size:14px;line-height:1.7;color:var(--body)">Roadmap priorisée, RACI, hypothèses documentées, KPIs de mesure, plan de conduite du changement.</p>
+      </div>
+    </div>
+    <!-- Engagements -->
+    <div class="card" style="padding:40px 36px">
+      <h3 style="font-size:18px;font-weight:700;text-align:center;margin-bottom:28px">Nos engagements</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:16px 40px">
+        <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Méthodologie éprouvée sur +30 missions PME / ETI</span></div>
+        <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Hypothèses et owners côté client toujours explicités</span></div>
+        <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Aucune promesse de conformité garantie — rigueur réelle</span></div>
+        <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Livrables actionnables, pas de slides qui dorment dans un tiroir</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ OFFRES ═══════════════ -->
+<section id="offres" class="sec" style="background:var(--bg)">
+  <div class="ctn">
+    <div class="rv text-c" style="margin-bottom:48px">
+      <h2 class="serif sec-title">Ce que vous obtenez <span class="grad-text serif" style="font-style:italic">concrètement</span></h2>
+      <p class="sec-sub">Pas de théorie. Des livrables exploitables dès le lendemain du workshop.</p>
+    </div>
+    <div class="flex-c" style="gap:12px;margin-bottom:56px">
+      <div class="chip"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Cartographie des cas d'usage IA prioritaires</div>
+      <div class="chip"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8"><rect x="3" y="12" width="4" height="9"/><rect x="10" y="7" width="4" height="14"/><rect x="17" y="3" width="4" height="18"/></svg>Scoring ROI / faisabilité par cas d'usage</div>
+      <div class="chip"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Go / NoGo documenté + hypothèses explicites</div>
+      <div class="chip"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>RACI : qui fait quoi, côté client et côté shōrAI</div>
+      <div class="chip"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Roadmap 90 jours avec KPIs de mesure</div>
+    </div>
+    <div class="grid3">
+      <!-- Workshop Cadrage -->
+      <div class="card offer-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          <h3 class="serif" style="font-size:20px;font-weight:700;color:var(--blue)">Workshop Cadrage</h3>
+        </div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:24px">2 à 3 jours · Pour les organisations prêtes à agir</p>
+        <div style="flex:1">
+          <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Cadrage stratégique complet</span></div>
+          <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Immersion métier sur site ou distanciel</span></div>
+          <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Livrables actionnables</span></div>
+          <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Owner côté client identifié</span></div>
+        </div>
+        <a href="#contact" class="offer-cta" style="border:1.5px solid var(--blue);color:var(--blue)" onmouseover="this.style.background='var(--blue)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--blue)'">En savoir plus</a>
+      </div>
+      <!-- Diagnostic IA PME -->
+      <div class="card offer-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          <h3 class="serif" style="font-size:20px;font-weight:700;color:var(--blue)">Diagnostic IA PME</h3>
+        </div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:24px">Audit complet · Pour structurer vos fondations</p>
+        <div style="flex:1">
+          <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Analyse process & données</span></div>
+          <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Quick wins identifiés</span></div>
+          <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Plan de remédiation pré-IA</span></div>
+          <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Hypothèses & méthode de mesure</span></div>
+        </div>
+        <a href="#contact" class="offer-cta" style="border:1.5px solid var(--blue);color:var(--blue)" onmouseover="this.style.background='var(--blue)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--blue)'">En savoir plus</a>
+      </div>
+      <!-- Solutions IA sur Mesure -->
+      <div class="card offer-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.8"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09zM12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+          <h3 class="serif" style="font-size:20px;font-weight:700;color:var(--purple)">Solutions IA sur Mesure</h3>
+        </div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:24px">Accompagnement continu · Pour passer à l'échelle</p>
+        <div style="flex:1">
+          <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Sélection et intégration d'outils IA adaptés</span></div>
+          <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Automatisation de processus métier ciblés</span></div>
+          <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Pilotage de la conduite du changement</span></div>
+          <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Suivi de performance et itérations</span></div>
+        </div>
+        <a href="#contact" class="offer-cta" style="border:1.5px solid var(--purple);color:var(--purple)" onmouseover="this.style.background='var(--purple)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--purple)'">En savoir plus</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ANTI-ZONE GRISE ═══════════════ -->
+<section class="sec" style="background:var(--bg-alt)">
+  <div class="ctn">
+    <div class="rv text-c" style="margin-bottom:48px">
+      <h2 class="serif sec-title">Méthode <span class="grad-text serif" style="font-style:italic">anti-zone grise</span></h2>
+      <p class="sec-sub">Pas d'ambiguïté. Chaque engagement est documenté, chaque responsabilité est claire.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:24px">
+      <div class="card incl-card" style="padding:32px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+          <h3 style="font-size:18px;font-weight:700">Inclus</h3>
+        </div>
+        <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Périmètre documenté et signé avant démarrage</span></div>
+        <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>RACI explicite : vos responsabilités vs les nôtres</span></div>
+        <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Hypothèses listées — pas de suppositions cachées</span></div>
+        <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>KPIs de mesure définis dès le cadrage</span></div>
+        <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Owner côté client nommé pour chaque livrable</span></div>
+        <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg><span>Processus de change control formalisé</span></div>
+      </div>
+      <div class="card excl-card" style="padding:32px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          <h3 style="font-size:18px;font-weight:700">Exclus</h3>
+        </div>
+        <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg><span>Promesses de « risque zéro » ou « conformité garantie »</span></div>
+        <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg><span>Implémentation technique (code, déploiement)</span></div>
+        <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg><span>Formation des équipes (périmètre séparé)</span></div>
+        <div class="chk-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg><span>Maintenance ou support continu</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ PRÉ-DIAGNOSTIC ═══════════════ -->
+<section id="diagnostic" class="sec" style="background:var(--bg-alt)">
+  <div class="ctn">
+    <div class="rv text-c" style="margin-bottom:48px">
+      <h2 class="serif sec-title">Pré-diagnostic <span class="grad-text serif" style="font-style:italic">gratuit</span></h2>
+      <p style="font-size:16px;color:var(--body)">8 questions · 2 minutes · Recommandation personnalisée</p>
+    </div>
+    <div id="quiz-container" style="max-width:600px;margin:0 auto;padding:clamp(24px,5vw,48px);border-radius:20px;border:1px solid var(--border);background:#fff;box-shadow:0 2px 16px rgba(0,0,0,.04)">
+      <!-- Quiz content injected by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FAQ + CONTACT ═══════════════ -->
+<section id="contact" class="sec" style="background:var(--bg)">
+  <div class="ctn">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:48px 56px;align-items:flex-start">
+      <!-- FAQ -->
+      <div>
+        <h2 class="serif rv" style="font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:900;margin-bottom:28px">Questions <span class="grad-text serif" style="font-style:italic">fréquentes</span></h2>
+        <div id="faq-container"></div>
+      </div>
+      <!-- Contact form -->
+      <div>
+        <h2 class="serif" style="font-size:clamp(1.6rem,3.5vw,2.4rem);font-weight:900;margin-bottom:28px">Parlons de <span class="grad-text serif" style="font-style:italic">votre projet</span></h2>
+        <!-- Contact selector -->
+        <div style="display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap">
+          <button class="contact-sel active" id="sel-frederic" onclick="selectContact('frederic')">
+            <div class="name">Écrire à Frédéric</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">frederic@shorai-group.com</div>
+          </button>
+          <button class="contact-sel" id="sel-william" onclick="selectContact('william')">
+            <div class="name">Écrire à William</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">william@shorai-group.com</div>
+          </button>
+        </div>
+        <form id="contact-form" onsubmit="handleContactSubmit(event)" style="display:flex;flex-direction:column;gap:14px">
+          <div><label class="form-label">Nom complet</label><input required placeholder="Jean Dupont" class="form-input" id="cf-name"></div>
+          <div><label class="form-label">Email professionnel</label><input required type="email" placeholder="jean@entreprise.com" class="form-input" id="cf-email"></div>
+          <div><label class="form-label">Votre besoin en quelques mots</label><textarea required placeholder="Décrivez brièvement votre contexte et vos attentes..." rows="4" class="form-input" id="cf-message" style="resize:vertical;min-height:100px"></textarea></div>
+          <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:13px;color:var(--body);line-height:1.5">
+            <input type="checkbox" id="cf-consent" style="margin-top:3px;accent-color:var(--blue);width:16px;height:16px;flex-shrink:0">
+            J'accepte que shōrAI Consulting traite mes données pour répondre à ma demande. Pas de spam.
+          </label>
+          <button type="submit" id="cf-submit" class="btn btn-blue" style="justify-content:center;width:100%;opacity:.5;cursor:not-allowed" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
+            Envoyer
+          </button>
+        </form>
+        <div id="cf-status" style="margin-top:12px;font-size:13px;text-align:center"></div>
+        <!-- Calendar links -->
+        <div style="text-align:center;margin-top:28px">
+          <p style="font-size:14px;color:var(--muted);margin-bottom:12px">Ou directement :</p>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <a href="https://calendar.app.google/Mib5EFdjDi21g46s8" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              30 min — Frédéric
+            </a>
+            <a href="https://calendar.app.google/o5kZYqGa7uGvhgBRA" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              30 min — William
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer">
+  <div class="ctn">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border)">
+      <div>
+        <span style="font-size:20px;font-weight:700"><span style="color:var(--blue)">shōrAI</span> <span style="font-weight:400;color:var(--muted);font-size:15px">Consulting</span></span>
+        <p style="font-size:13px;color:var(--muted);margin-top:4px">Conseil IA opérationnel pour PME & ETI</p>
+      </div>
+      <a href="#contact" class="btn btn-blue btn-sm">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Réserver 30 min
+      </a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:20px 32px;margin-bottom:24px;font-size:13px;color:var(--body);line-height:1.6">
+      <div><div class="footer-label">Entité juridique</div><p style="font-weight:600">SHOURAI CONSULTING OÜ</p></div>
+      <div><div class="footer-label">Tallinn</div><p style="display:flex;gap:6px;align-items:flex-start"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Harju maakond, Kesklinna linnaosa, Ahtri tn 12, 15551</p></div>
+      <div><div class="footer-label">Paris 8e</div><p style="display:flex;gap:6px;align-items:flex-start"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Paris, France</p></div>
+      <div><div class="footer-label">Bordeaux</div><p style="display:flex;gap:6px;align-items:flex-start"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Bordeaux, France</p></div>
+      <div>
+        <div class="footer-label">Contact</div>
+        <div style="margin-bottom:6px"><span style="font-weight:600">Frédéric</span> — <a href="mailto:frederic@shorai-group.com" style="color:var(--blue)">frederic@shorai-group.com</a></div>
+        <div><span style="font-weight:600">William</span> — <a href="mailto:william@shorai-group.com" style="color:var(--blue)">william@shorai-group.com</a></div>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:20px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;font-size:12px;color:var(--muted)">
+      <span>© 2026 SHOURAI CONSULTING OÜ. Tous droits réservés.</span>
+      <div style="display:flex;gap:20px">
+        <a href="#" style="transition:color .2s" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--muted)'">Mentions légales</a>
+        <a href="#" style="transition:color .2s" onmouseover="this.style.color='var(--ink)'" onmouseout="this.style.color='var(--muted)'">Politique de confidentialité</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════ JAVASCRIPT ═══════════════ -->
+<script>
+/* --- Nav scroll --- */
+window.addEventListener('scroll',()=>{document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>30)},{passive:true});
+
+/* --- Mobile drawer --- */
+function toggleDrawer(){document.getElementById('drawer').classList.toggle('open');document.getElementById('overlay').classList.toggle('open')}
+
+/* --- Reveal on scroll --- */
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');obs.unobserve(e.target)}})},{threshold:.12});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+
+/* --- Contact form --- */
+let selectedContact='frederic';
+const contacts={frederic:{name:'Frédéric',email:'frederic@shorai-group.com'},william:{name:'William',email:'william@shorai-group.com'}};
+
+function selectContact(who){
+  selectedContact=who;
+  document.getElementById('sel-frederic').classList.toggle('active',who==='frederic');
+  document.getElementById('sel-william').classList.toggle('active',who==='william');
+}
+
+document.getElementById('cf-consent').addEventListener('change',function(){
+  const btn=document.getElementById('cf-submit');
+  btn.disabled=!this.checked;btn.style.opacity=this.checked?'1':'.5';btn.style.cursor=this.checked?'pointer':'not-allowed';
+});
+
+function handleContactSubmit(e){
+  e.preventDefault();
+  const c=contacts[selectedContact];
+  const name=document.getElementById('cf-name').value;
+  const email=document.getElementById('cf-email').value;
+  const msg=document.getElementById('cf-message').value;
+  const subj=encodeURIComponent('[shōrAI] Message de '+name);
+  const body=encodeURIComponent('Nom : '+name+'\nEmail : '+email+'\n\n'+msg);
+  window.open('mailto:'+c.email+'?subject='+subj+'&body='+body,'_self');
+  document.getElementById('cf-status').innerHTML='<span style="color:#16a34a">✓ Votre client mail s\'est ouvert pour envoyer à '+c.name+'.</span>';
+}
+
+/* --- FAQ --- */
+const faqData=[
+  {q:"Quels types d'entreprises accompagnez-vous ?",a:"Nous accompagnons principalement les PME (50-249 salariés) et ETI (250-5000 salariés) tous secteurs confondus."},
+  {q:"Quelle est la différence entre le Workshop et le Diagnostic ?",a:"Le Workshop Cadrage (2-3 jours) est orienté action immédiate : vous repartez avec une roadmap. Le Diagnostic est plus approfondi : il audite vos process et données."},
+  {q:"Quelles garanties offrez-vous ?",a:"Nous ne promettons jamais de « risque zéro ». En revanche : périmètre documenté, RACI explicite, hypothèses listées, KPIs définis dès le cadrage."},
+  {q:"Faut-il des compétences IA en interne ?",a:"Non. Notre accompagnement est conçu pour des équipes non techniques. Si vous avez déjà des compétences, nous les embarquons."},
+  {q:"Combien de temps dure une mission ?",a:"Un Workshop dure 2-3 jours. Un Diagnostic complet prend 2-4 semaines. Les Solutions sur Mesure sont dimensionnées selon vos besoins."},
+  {q:"Comment mesurez-vous le succès ?",a:"Chaque mission définit des KPIs mesurables dès le départ : ROI projeté, temps gagné, taux d'adoption. Point à 30, 60 et 90 jours."},
+];
+const faqC=document.getElementById('faq-container');
+faqData.forEach(f=>{
+  const d=document.createElement('div');d.className='faq-item';
+  d.innerHTML=`<button class="faq-btn" onclick="this.classList.toggle('open');this.nextElementSibling.style.maxHeight=this.classList.contains('open')?'400px':'0'">${f.q}<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-body"><p>${f.a}</p></div>`;
+  faqC.appendChild(d);
+});
+
+/* --- Quiz --- */
+const quizQ=[
+  {q:"Quelle est la taille de votre entreprise ?",opts:["10 – 49 salariés","50 – 249 salariés","250 – 1 000 salariés","1 000+ salariés"]},
+  {q:"Quel est votre secteur d'activité ?",opts:["Industrie / Manufacturing","Services / Conseil","Commerce / Distribution","Autre"]},
+  {q:"Où en êtes-vous avec l'IA ?",opts:["On n'a rien fait encore","Quelques expérimentations isolées","Des projets pilotes en cours","Déploiement à l'échelle"]},
+  {q:"Quel est votre principal enjeu ?",opts:["Réduire les coûts opérationnels","Accélérer les process","Améliorer l'expérience client","Créer de nouveaux produits / services"]},
+  {q:"Avez-vous des données structurées exploitables ?",opts:["Pas vraiment, c'est le chaos","Quelques bases de données","Oui, assez bien organisées","Data warehouse en place"]},
+  {q:"Quel budget envisagez-vous pour un premier cadrage ?",opts:["< 3 000 €","3 000 – 6 000 €","6 000 – 15 000 €","> 15 000 €"]},
+  {q:"Quel est votre horizon de décision ?",opts:["Immédiat (< 1 mois)","Court terme (1–3 mois)","Moyen terme (3–6 mois)","Exploration sans urgence"]},
+  {q:"Qui porte le sujet IA dans votre organisation ?",opts:["Le dirigeant / CEO","Le DSI / CTO","Un responsable métier","Personne encore"]},
+];
+let qStep=0,qAnswers=[];
+function renderQuiz(){
+  const c=document.getElementById('quiz-container');
+  if(qStep<quizQ.length){
+    const pct=Math.round((qStep/quizQ.length)*100);
+    c.innerHTML=`
+      <div style="display:flex;justify-content:space-between;font-size:14px;color:var(--muted);margin-bottom:12px"><span>Question ${qStep+1} / ${quizQ.length}</span><span>${pct}%</span></div>
+      <div class="prog-bg"><div class="prog-fill" style="width:${pct}%"></div></div>
+      <h3 style="font-size:18px;font-weight:700;margin-bottom:20px;line-height:1.4">${quizQ[qStep].q}</h3>
+      <div style="display:flex;flex-direction:column;gap:10px">${quizQ[qStep].opts.map((o,i)=>`<button class="quiz-opt" onclick="qAnswers.push('${o.replace(/'/g,"\\'")}');qStep++;renderQuiz()">${o}</button>`).join('')}</div>
+      ${qStep>0?'<button onclick="qStep--;qAnswers.pop();renderQuiz()" style="margin-top:20px;font-size:14px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:\'DM Sans\',sans-serif">← Précédent</button>':''}
+    `;
+  }else{
+    c.innerHTML=`
+      <div style="text-align:center">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;margin:0 auto 20px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg></div>
+        <h3 class="serif" style="font-size:24px;font-weight:700;margin-bottom:12px">Merci !</h3>
+        <p style="font-size:15px;color:var(--body);margin-bottom:28px;line-height:1.7">Votre profil correspond à nos missions. Réservez un créneau de 30 min pour votre recommandation personnalisée.</p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <a href="https://calendar.app.google/Mib5EFdjDi21g46s8" target="_blank" rel="noopener noreferrer" class="btn btn-blue btn-sm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>RDV Frédéric</a>
+          <a href="https://calendar.app.google/o5kZYqGa7uGvhgBRA" target="_blank" rel="noopener noreferrer" class="btn btn-blue btn-sm"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>RDV William</a>
+        </div>
+        <button onclick="qStep=0;qAnswers=[];renderQuiz()" style="margin-top:20px;font-size:14px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:underline">Recommencer</button>
+      </div>
+    `;
+  }
+}
+renderQuiz();
+</script>
+</body>
+</html>
