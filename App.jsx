@@ -1,20 +1,13 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>shōrAI Preview</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,700;0,8..60,900;1,8..60,400;1,8..60,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-</head>
-<body>
-<div id="root"></div>
-<script type="text/babel" data-type="module">
-const { useState, useEffect, useRef } = React;
+import { useState, useEffect, useRef } from "react";
+import emailjs from "@emailjs/browser";
+
+/* ═══════════════════════════════════════════════════════════════
+   shōrAI ConsultingProduction Build
+   SHOURAI CONSULTING OÜTallinn · Paris 8 · Bordeaux
+
+   EmailJS : remplissez les 3 clés ci-dessous pour activer
+   l'envoi direct des formulaires de contact.
+   ═══════════════════════════════════════════════════════════════ */
 
 const CONFIG = {
   brand: "shōrAI",
@@ -26,10 +19,16 @@ const CONFIG = {
     { city: "Paris 8e", detail: "Paris, France" },
     { city: "Bordeaux", detail: "Bordeaux, France" },
   ],
+  /* ─── Contact unifié shōrAI ─── */
   contact: {
     name: "shōrAI",
     email: "contact@shorai-group.com",
     calendar: "https://calendar.app.google/Mib5EFdjDi21g46s8",
+  },
+  emailjs: {
+    serviceId: "YOUR_SERVICE_ID",
+    templateId: "YOUR_TEMPLATE_ID",
+    publicKey: "YOUR_PUBLIC_KEY",
   },
 };
 
@@ -41,7 +40,10 @@ const C = {
   border: "#e9ecef", bg: "#ffffff", bgAlt: "#f8f9fa", bgDiag: "#f1f3f5",
 };
 
+const FONTS = "https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,700;0,8..60,900;1,8..60,400;1,8..60,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap";
+
 const globalCSS = `
+@import url('${FONTS}');
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;font-size:16px}
 body{font-family:'DM Sans',system-ui,sans-serif;color:${C.ink};background:${C.bg};overflow-x:hidden;-webkit-font-smoothing:antialiased}
@@ -56,13 +58,9 @@ a{color:inherit;text-decoration:none}
 .sec{padding:96px 24px}
 @media(max-width:640px){.sec{padding:64px 16px}}
 .ctn{max-width:1120px;margin:0 auto;width:100%}
-/* Fallback logo (stylisé) si l'image est absente */
-.logo-fallback{display:inline-flex;align-items:center;gap:12px;font-family:'Source Serif 4',serif;font-weight:900;font-size:26px;letter-spacing:-.02em}
-.logo-fallback .mark{width:48px;height:48px;border-radius:50%;background:${C.grad};box-shadow:inset 0 0 0 4px #1A1A1A}
-.logo-fallback .word{background:linear-gradient(135deg,${C.blue} 0%, ${C.purple} 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.logo-fallback .kanji{font-family:'Noto Serif JP',serif;color:${C.blue};font-weight:400;font-size:22px;margin-left:4px}
 `;
 
+/* ─── HOOKS ─── */
 function useReveal() {
   const ref = useRef(null);
   useEffect(() => {
@@ -78,29 +76,20 @@ function RevealDiv({ children, style = {}, className = "" }) {
   return <div ref={r} className={`rv ${className}`} style={style}>{children}</div>;
 }
 
+/* ─── LOGO (vrai PNG) ─── */
 function Logo() {
-  const [err, setErr] = useState(false);
-  if (err) {
-    return (
-      <a href="#" className="logo-fallback" aria-label="shōrAI 将来">
-        <span className="mark"></span>
-        <span className="word">shōrAI</span>
-        <span className="kanji">将来</span>
-      </a>
-    );
-  }
   return (
     <a href="#" style={{ display: "inline-flex", alignItems: "center" }}>
       <img
-        src="public/logo_shorai.png"
+        src="/logo_shorai.png"
         alt="shōrAI 将来"
-        onError={() => setErr(true)}
         style={{ height: 140, width: "auto", objectFit: "contain", display: "block" }}
       />
     </a>
   );
 }
 
+/* ─── ICONS ─── */
 const I = {
   Menu: () => <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>,
   X: () => <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>,
@@ -124,6 +113,31 @@ const I = {
   Rocket: () => <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={C.purple} strokeWidth="1.8"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09zM12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>,
 };
 
+/* ─── EMAILJS ─── */
+async function sendEmail(formData, toContact) {
+  if (CONFIG.emailjs.serviceId === "YOUR_SERVICE_ID") {
+    // Fallback mailto
+    const subj = encodeURIComponent(`[shōrAI] Message de ${formData.name}`);
+    const body = encodeURIComponent(`Nom : ${formData.name}\nEmail : ${formData.email}\n\n${formData.message}`);
+    window.open(`mailto:${toContact.email}?subject=${subj}&body=${body}`, "_self");
+    return { ok: true, fallback: true };
+  }
+  try {
+    await emailjs.send(CONFIG.emailjs.serviceId, CONFIG.emailjs.templateId, {
+      from_name: formData.name,
+      from_email: formData.email,
+      to_email: toContact.email,
+      to_name: toContact.name,
+      message: formData.message,
+    }, CONFIG.emailjs.publicKey);
+    return { ok: true };
+  } catch (err) {
+    console.error("EmailJS error:", err);
+    return { ok: false, error: err };
+  }
+}
+
+/* ═══════════════ NAV ═══════════════ */
 function Nav() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -140,8 +154,8 @@ function Nav() {
         <div className="ctn" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: "100%", padding: "0 24px" }}>
           <Logo />
           <div className="desk" style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            {links.map(l => <a key={l.href} href={l.href} style={{ padding: "8px 16px", fontSize: 14, fontWeight: 500, color: C.ink, borderRadius: 6 }}>{l.label}</a>)}
-            <a href="#contact" style={{ marginLeft: 12, padding: "10px 20px", background: C.blue, color: "#fff", borderRadius: 8, fontSize: 14, fontWeight: 600, display: "inline-flex", alignItems: "center", gap: 6 }}><I.Cal /> Réserver</a>
+            {links.map(l => <a key={l.href} href={l.href} style={{ padding: "8px 16px", fontSize: 14, fontWeight: 500, color: C.ink, borderRadius: 6, transition: "background .2s" }} onMouseEnter={e => e.currentTarget.style.background = C.bgAlt} onMouseLeave={e => e.currentTarget.style.background = "transparent"}>{l.label}</a>)}
+            <a href="#contact" style={{ marginLeft: 12, padding: "10px 20px", background: C.blue, color: "#fff", borderRadius: 8, fontSize: 14, fontWeight: 600, display: "inline-flex", alignItems: "center", gap: 6, transition: "background .2s" }} onMouseEnter={e => e.currentTarget.style.background = C.blueDark} onMouseLeave={e => e.currentTarget.style.background = C.blue}><I.Cal /> Réserver</a>
           </div>
           <button className="mob" onClick={() => setOpen(true)} style={{ background: "none", border: "none", cursor: "pointer", color: C.ink }}><I.Menu /></button>
         </div>
@@ -156,6 +170,7 @@ function Nav() {
   );
 }
 
+/* ═══════════════ HERO ═══════════════ */
 function Hero() {
   return (
     <section style={{ paddingTop: 220, paddingBottom: 100, textAlign: "center", background: `linear-gradient(180deg, ${C.bgAlt} 0%, ${C.bg} 100%)` }}>
@@ -172,8 +187,8 @@ function Hero() {
           shōrAI identifie en 72 h les cas d'usage IA à fort ROI dans votre organisation, avec une méthode structurée, un Go/NoGo clair, et zéro zone grise.
         </p>
         <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap", marginBottom: 24 }}>
-          <a href="#contact" style={{ padding: "14px 28px", background: C.blue, color: "#fff", borderRadius: 10, fontWeight: 600, fontSize: 15, display: "inline-flex", alignItems: "center", gap: 8, boxShadow: "0 2px 12px rgba(59,91,219,.25)" }}><I.Cal /> Réserver 30 min gratuit</a>
-          <a href="#diagnostic" style={{ padding: "14px 28px", border: `1.5px solid ${C.border}`, borderRadius: 10, fontWeight: 500, fontSize: 15, color: C.ink, display: "inline-flex", alignItems: "center", gap: 8 }}>Pré-diagnostic gratuit <I.Arrow /></a>
+          <a href="#contact" style={{ padding: "14px 28px", background: C.blue, color: "#fff", borderRadius: 10, fontWeight: 600, fontSize: 15, display: "inline-flex", alignItems: "center", gap: 8, transition: "background .2s, transform .15s", boxShadow: "0 2px 12px rgba(59,91,219,.25)" }} onMouseEnter={e => { e.currentTarget.style.background = C.blueDark; e.currentTarget.style.transform = "translateY(-1px)"; }} onMouseLeave={e => { e.currentTarget.style.background = C.blue; e.currentTarget.style.transform = "none"; }}><I.Cal /> Réserver 30 min gratuit</a>
+          <a href="#diagnostic" style={{ padding: "14px 28px", border: `1.5px solid ${C.border}`, borderRadius: 10, fontWeight: 500, fontSize: 15, color: C.ink, display: "inline-flex", alignItems: "center", gap: 8, transition: "border-color .2s" }} onMouseEnter={e => e.currentTarget.style.borderColor = C.blue} onMouseLeave={e => e.currentTarget.style.borderColor = C.border}>Pré-diagnostic gratuit <I.Arrow /></a>
         </div>
         <p style={{ fontSize: 13, color: C.muted }}>Sans engagement · Résultat immédiat · Confidentialité assurée</p>
       </RevealDiv>
@@ -181,6 +196,7 @@ function Hero() {
   );
 }
 
+/* ═══════════════ POURQUOI 90% ÉCHOUENT ═══════════════ */
 const painPoints = [
   { icon: <I.Warn />, title: "Vous avez une Ferrari… sans chaîne.", desc: "Les outils IA existent, mais vos process internes ne sont pas prêts à les exploiter. Résultat : investissement sans retour." },
   { icon: <I.Chart />, title: "L'IA amplifie l'existant, le bon comme le mauvais.", desc: "Sans diagnostic, automatiser un process bancal ne fait qu'accélérer le chaos. Il faut d'abord comprendre, puis outiller." },
@@ -199,7 +215,7 @@ function PainSection() {
         </RevealDiv>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: 20 }}>
           {painPoints.map((p, i) => (
-            <RevealDiv key={i} style={{ padding: 32, borderRadius: 16, border: `1px solid ${C.border}`, background: "#fff" }}>
+            <RevealDiv key={i} style={{ padding: 32, borderRadius: 16, border: `1px solid ${C.border}`, background: "#fff", transition: "box-shadow .3s, transform .3s" }}>
               <div style={{ marginBottom: 18 }}>{p.icon}</div>
               <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 10, lineHeight: 1.35, color: C.ink }}>{p.title}</h3>
               <p style={{ fontSize: 14, lineHeight: 1.7, color: C.body }}>{p.desc}</p>
@@ -211,6 +227,7 @@ function PainSection() {
   );
 }
 
+/* ═══════════════ MÉTHODE ═══════════════ */
 const methodeCards = [
   { icon: <I.Target />, title: "Cadrage stratégique", desc: "Identification des cas d'usage à plus fort ROI, alignés sur vos priorités business." },
   { icon: <I.Shield />, title: "Go / NoGo factuel", desc: "Chaque cas d'usage est évalué sur faisabilité, données, risques et gain attendu. Pas d'ambiguïté." },
@@ -251,6 +268,7 @@ function Methode() {
   );
 }
 
+/* ═══════════════ OFFRES ═══════════════ */
 const livrables = [
   { icon: <I.Grid />, label: "Cartographie des cas d'usage IA prioritaires" },
   { icon: <I.BarChart />, label: "Scoring ROI / faisabilité par cas d'usage" },
@@ -286,7 +304,9 @@ function Offres() {
               <div style={{ flex: 1 }}>
                 {o.items.map((item, j) => <div key={j} style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 12 }}><I.Check /><span style={{ fontSize: 14, color: C.body }}>{item}</span></div>)}
               </div>
-              <a href="#contact" style={{ marginTop: 20, padding: "12px 20px", borderRadius: 10, border: `1.5px solid ${o.accent}`, color: o.accent, fontSize: 14, fontWeight: 600, textAlign: "center", display: "block" }}>En savoir plus</a>
+              <a href="#contact" style={{ marginTop: 20, padding: "12px 20px", borderRadius: 10, border: `1.5px solid ${o.accent}`, color: o.accent, fontSize: 14, fontWeight: 600, textAlign: "center", transition: "all .2s", display: "block" }}
+                onMouseEnter={e => { e.currentTarget.style.background = o.accent; e.currentTarget.style.color = "#fff"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = o.accent; }}>En savoir plus</a>
             </div>
           ))}
         </div>
@@ -295,6 +315,7 @@ function Offres() {
   );
 }
 
+/* ═══════════════ ANTI-ZONE GRISE ═══════════════ */
 const inclus = ["Périmètre documenté et signé avant démarrage", "RACI explicite : vos responsabilités vs les nôtres", "Hypothèses listées, pas de suppositions cachées", "KPIs de mesure définis dès le cadrage", "Owner côté client nommé pour chaque livrable", "Processus de change control formalisé"];
 const exclus = ["Promesses de « risque zéro » ou « conformité garantie »", "Implémentation technique (code, déploiement)", "Formation des équipes (périmètre séparé)", "Maintenance ou support continu"];
 
@@ -321,6 +342,7 @@ function AntiZoneGrise() {
   );
 }
 
+/* ═══════════════ PRÉ-DIAGNOSTIC ═══════════════ */
 const quizQ = [
   { q: "Quelle est la taille de votre entreprise ?", opts: ["10 – 49 salariés", "50 – 249 salariés", "250 – 1 000 salariés", "1 000+ salariés"], scores: [1, 2, 3, 3], dim: "size", people: [5, 15, 40, 100] },
   { q: "Quel est votre secteur d'activité ?", opts: ["Industrie / Manufacturing", "Services / Conseil", "Commerce / Distribution", "Autre"], scores: [0, 0, 0, 0], dim: "sector" },
@@ -402,7 +424,7 @@ function MiniCalculator({ defaultPeople }) {
         </div>
       </div>
       <p style={{ fontSize: 12, color: C.muted, marginTop: 12, lineHeight: 1.5, textAlign: "center" }}>Estimation indicative sur 47 semaines. Pour une analyse détaillée avec payback et comparatif :</p>
-      <a href="public/serviette.html" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 10, padding: "12px 20px", borderRadius: 10, border: `1.5px solid ${C.blue}`, color: C.blue, fontWeight: 600, fontSize: 14, background: "#fff" }}>
+      <a href="/serviette.html" target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 10, padding: "12px 20px", borderRadius: 10, border: `1.5px solid ${C.blue}`, color: C.blue, fontWeight: 600, fontSize: 14, transition: "all .2s", background: "#fff" }} onMouseEnter={e => { e.currentTarget.style.background = C.blueLight; }} onMouseLeave={e => { e.currentTarget.style.background = "#fff"; }}>
         <I.Chart /> Affiner avec le test de la serviette
         <I.Arrow />
       </a>
@@ -431,7 +453,7 @@ function PreDiagnostic() {
             <div style={{ height: 4, borderRadius: 2, background: C.bgDiag, marginBottom: 28 }}><div style={{ height: "100%", width: `${pct}%`, background: C.blue, borderRadius: 2, transition: "width .4s" }} /></div>
             <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 20, lineHeight: 1.4 }}>{quizQ[step].q}</h3>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {quizQ[step].opts.map((o, i) => <button key={i} onClick={() => handleAnswer(i)} style={{ padding: "16px 20px", borderRadius: 12, border: `1px solid ${C.border}`, background: C.bgAlt, fontSize: 15, color: C.ink, cursor: "pointer", textAlign: "left", fontFamily: "'DM Sans',sans-serif", fontWeight: 500 }}>{o}</button>)}
+              {quizQ[step].opts.map((o, i) => <button key={i} onClick={() => handleAnswer(i)} style={{ padding: "16px 20px", borderRadius: 12, border: `1px solid ${C.border}`, background: C.bgAlt, fontSize: 15, color: C.ink, cursor: "pointer", textAlign: "left", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, transition: "all .2s" }} onMouseEnter={e => { e.currentTarget.style.borderColor = C.blue; e.currentTarget.style.background = C.blueLight; }} onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.background = C.bgAlt; }}>{o}</button>)}
             </div>
             {step > 0 && <button onClick={() => { setStep(step - 1); setAnswers(answers.slice(0, -1)); }} style={{ marginTop: 20, fontSize: 14, color: C.muted, background: "none", border: "none", cursor: "pointer", fontFamily: "'DM Sans',sans-serif" }}>← Précédent</button>}
           </>) : result && (
@@ -473,6 +495,7 @@ function PreDiagnostic() {
   );
 }
 
+/* ═══════════════ FAQ + CONTACT ═══════════════ */
 const faqData = [
   { q: "Quels types d'entreprises accompagnez-vous ?", a: "Nous accompagnons principalement les PME (50-249 salariés) et ETI (250-5000 salariés) tous secteurs confondus." },
   { q: "Quelle est la différence entre le Workshop et le Diagnostic ?", a: "Le Workshop Cadrage (2-3 jours) est orienté action immédiate : vous repartez avec une roadmap. Le Diagnostic est plus approfondi : il audite vos process et données." },
@@ -503,16 +526,15 @@ function ContactSection() {
   const [status, setStatus] = useState(null);
   const contact = CONFIG.contact;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); if (!consent) return;
-    const subj = encodeURIComponent(`[shōrAI] Message de ${form.name}`);
-    const body = encodeURIComponent(`Nom : ${form.name}\nEmail : ${form.email}\n\n${form.message}`);
-    window.open(`mailto:${contact.email}?subject=${subj}&body=${body}`, "_self");
-    setStatus("sent");
-    setTimeout(() => setStatus(null), 5000);
+    setStatus("sending");
+    const res = await sendEmail(form, contact);
+    if (res.ok) { setStatus("sent"); if (!res.fallback) { setForm({ name: "", email: "", message: "" }); setConsent(false); } setTimeout(() => setStatus(null), 5000); }
+    else { setStatus("error"); setTimeout(() => setStatus(null), 5000); }
   };
 
-  const inp = { width: "100%", padding: "14px 16px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 15, fontFamily: "'DM Sans',sans-serif", outline: "none", background: C.bgAlt };
+  const inp = { width: "100%", padding: "14px 16px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 15, fontFamily: "'DM Sans',sans-serif", outline: "none", transition: "border-color .2s", background: C.bgAlt };
 
   return (
     <section id="contact" className="sec" style={{ background: C.bg }}>
@@ -529,21 +551,24 @@ function ContactSection() {
               <div style={{ fontSize: 13, color: C.muted, marginTop: 2 }}>{contact.email}</div>
             </div>
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              <div><label style={{ fontSize: 14, fontWeight: 600, marginBottom: 6, display: "block" }}>Nom complet</label><input required placeholder="Jean Dupont" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} style={inp} /></div>
-              <div><label style={{ fontSize: 14, fontWeight: 600, marginBottom: 6, display: "block" }}>Email professionnel</label><input required type="email" placeholder="jean@entreprise.com" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} style={inp} /></div>
-              <div><label style={{ fontSize: 14, fontWeight: 600, marginBottom: 6, display: "block" }}>Votre besoin en quelques mots</label><textarea required placeholder="Décrivez brièvement votre contexte et vos attentes..." rows={4} value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} style={{ ...inp, resize: "vertical", minHeight: 100 }} /></div>
+              <div><label style={{ fontSize: 14, fontWeight: 600, marginBottom: 6, display: "block" }}>Nom complet</label><input required placeholder="Jean Dupont" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} style={inp} onFocus={e => e.target.style.borderColor = C.blue} onBlur={e => e.target.style.borderColor = C.border} /></div>
+              <div><label style={{ fontSize: 14, fontWeight: 600, marginBottom: 6, display: "block" }}>Email professionnel</label><input required type="email" placeholder="jean@entreprise.com" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} style={inp} onFocus={e => e.target.style.borderColor = C.blue} onBlur={e => e.target.style.borderColor = C.border} /></div>
+              <div><label style={{ fontSize: 14, fontWeight: 600, marginBottom: 6, display: "block" }}>Votre besoin en quelques mots</label><textarea required placeholder="Décrivez brièvement votre contexte et vos attentes..." rows={4} value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} style={{ ...inp, resize: "vertical", minHeight: 100 }} onFocus={e => e.target.style.borderColor = C.blue} onBlur={e => e.target.style.borderColor = C.border} /></div>
               <label style={{ display: "flex", gap: 10, alignItems: "flex-start", cursor: "pointer", fontSize: 13, color: C.body, lineHeight: 1.5 }}>
                 <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} style={{ marginTop: 3, accentColor: C.blue, width: 16, height: 16, flexShrink: 0 }} />
                 J'accepte que shōrAI Consulting traite mes données pour répondre à ma demande. Pas de spam.
               </label>
-              <button type="submit" disabled={!consent} style={{ padding: "16px", borderRadius: 12, border: "none", background: !consent ? C.muted : C.blue, color: "#fff", fontSize: 15, fontWeight: 600, cursor: consent ? "pointer" : "not-allowed", fontFamily: "'DM Sans',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
-                {status === "sent" ? "✓ Envoyé !" : <><I.Send /> Envoyer</>}
+              <button type="submit" disabled={!consent || status === "sending"} style={{ padding: "16px", borderRadius: 12, border: "none", background: !consent ? C.muted : C.blue, color: "#fff", fontSize: 15, fontWeight: 600, cursor: consent ? "pointer" : "not-allowed", fontFamily: "'DM Sans',sans-serif", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, transition: "background .2s", opacity: status === "sending" ? .7 : 1 }}
+                onMouseEnter={e => { if (consent && status !== "sending") e.currentTarget.style.background = C.blueDark; }}
+                onMouseLeave={e => { if (consent) e.currentTarget.style.background = C.blue; }}>
+                {status === "sending" ? "Envoi..." : status === "sent" ? "✓ Envoyé !" : status === "error" ? "Erreur, réessayez" : <><I.Send /> Envoyer</>}
               </button>
             </form>
+            {status === "sent" && <p style={{ marginTop: 12, fontSize: 13, color: "#16a34a", textAlign: "center" }}>Message envoyé à {contact.name}. Réponse sous 24 h.</p>}
             <div style={{ textAlign: "center", marginTop: 28 }}>
               <p style={{ fontSize: 14, color: C.muted, marginBottom: 12 }}>Ou directement :</p>
               <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-                <a href={contact.calendar} target="_blank" rel="noopener noreferrer" style={{ padding: "12px 20px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, fontWeight: 500, display: "inline-flex", alignItems: "center", gap: 6 }}><I.Cal /> 30 min avec nos experts</a>
+                <a href={contact.calendar} target="_blank" rel="noopener noreferrer" style={{ padding: "12px 20px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, fontWeight: 500, display: "inline-flex", alignItems: "center", gap: 6, transition: "border-color .2s" }} onMouseEnter={e => e.currentTarget.style.borderColor = C.blue} onMouseLeave={e => e.currentTarget.style.borderColor = C.border}><I.Cal /> 30 min avec nos experts</a>
               </div>
             </div>
           </div>
@@ -553,6 +578,7 @@ function ContactSection() {
   );
 }
 
+/* ═══════════════ FOOTER ═══════════════ */
 function Footer() {
   return (
     <footer style={{ background: "#fff", borderTop: `1px solid ${C.border}`, padding: "40px 24px 28px" }}>
@@ -562,7 +588,7 @@ function Footer() {
             <span style={{ fontSize: 20, fontWeight: 700 }}><span style={{ color: C.blue }}>shōrAI</span> <span style={{ fontWeight: 400, color: C.muted, fontSize: 15 }}>Consulting</span></span>
             <p style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>{CONFIG.tagline}</p>
           </div>
-          <a href="#contact" style={{ padding: "12px 24px", background: C.blue, color: "#fff", borderRadius: 10, fontWeight: 600, fontSize: 14, display: "inline-flex", alignItems: "center", gap: 6 }}><I.Cal /> Réserver 30 min</a>
+          <a href="#contact" style={{ padding: "12px 24px", background: C.blue, color: "#fff", borderRadius: 10, fontWeight: 600, fontSize: 14, display: "inline-flex", alignItems: "center", gap: 6, transition: "background .2s" }} onMouseEnter={e => e.currentTarget.style.background = C.blueDark} onMouseLeave={e => e.currentTarget.style.background = C.blue}><I.Cal /> Réserver 30 min</a>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 1fr))", gap: "20px 32px", marginBottom: 24, fontSize: 13, color: C.body, lineHeight: 1.6 }}>
           <div><div style={{ fontWeight: 700, color: C.ink, marginBottom: 8, fontSize: 12, textTransform: "uppercase", letterSpacing: ".06em" }}>Entité juridique</div><p style={{ fontWeight: 600 }}>{CONFIG.entity}</p></div>
@@ -572,8 +598,8 @@ function Footer() {
         <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 20, display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 12, fontSize: 12, color: C.muted }}>
           <span>© {new Date().getFullYear()} {CONFIG.entity}. Tous droits réservés. Site créé par shōrAI Consulting.</span>
           <div style={{ display: "flex", gap: 20 }}>
-            <a href="#">Mentions légales</a>
-            <a href="#">Politique de confidentialité</a>
+            <a href="#" style={{ transition: "color .2s" }} onMouseEnter={e => e.currentTarget.style.color = C.ink} onMouseLeave={e => e.currentTarget.style.color = C.muted}>Mentions légales</a>
+            <a href="#" style={{ transition: "color .2s" }} onMouseEnter={e => e.currentTarget.style.color = C.ink} onMouseLeave={e => e.currentTarget.style.color = C.muted}>Politique de confidentialité</a>
           </div>
         </div>
       </div>
@@ -581,7 +607,8 @@ function Footer() {
   );
 }
 
-function App() {
+/* ═══════════════ APP ═══════════════ */
+export default function App() {
   return (
     <>
       <style>{globalCSS}</style>
@@ -597,8 +624,3 @@ function App() {
     </>
   );
 }
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-</script>
-</body>
-</html>
