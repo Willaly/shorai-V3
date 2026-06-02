@@ -1,0 +1,1088 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Test de la serviette · shōrAI</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,700;0,8..60,900;1,8..60,400;1,8..60,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue: #3B5BDB;
+    --blue-dark: #2B4BC8;
+    --blue-light: #EDF2FF;
+    --orange: #E8790C;
+    --red: #E03131;
+    --purple: #7048C6;
+    --grad: linear-gradient(135deg, #E8790C 0%, #E03131 35%, #7048C6 70%, #3B5BDB 100%);
+    --ink: #1a1a2e;
+    --body: #4a4a5a;
+    --muted: #8b8b9a;
+    --border: #e9ecef;
+    --bg: #ffffff;
+    --bg-alt: #f8f9fa;
+    --green: #16a34a;
+    --green-bg: #f0fdf4;
+    --green-border: #bbf7d0;
+    --orange-bg: #fffbeb;
+    --orange-border: #fde68a;
+    --red-bg: #fef2f2;
+    --red-border: #fecaca;
+    --radius: 16px;
+    --shadow: 0 2px 16px rgba(0,0,0,.04);
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box }
+  html { scroll-behavior: smooth; font-size: 16px }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+  ::selection { background: var(--blue); color: #fff }
+  a { color: inherit; text-decoration: none }
+  .serif { font-family: 'Source Serif 4', Georgia, serif }
+  .grad-text {
+    background: var(--grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ---- Layout ---- */
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 24px }
+
+  /* ---- Header / Nav bar ---- */
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255,255,255,.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+  }
+  .top-bar-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .top-bar .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .top-bar .brand img { height: 32px; width: auto }
+  .top-bar .brand span {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .back-link {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: color .2s;
+  }
+  .back-link:hover { color: var(--ink) }
+
+  /* ---- Hero ---- */
+  .hero {
+    text-align: center;
+    padding: 72px 24px 56px;
+    background: linear-gradient(180deg, var(--bg-alt) 0%, var(--bg) 100%);
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 18px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--body);
+    margin-bottom: 28px;
+  }
+  .hero-badge .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--blue);
+  }
+  .hero h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 900;
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .hero p {
+    font-size: clamp(0.95rem, 2vw, 1.05rem);
+    line-height: 1.75;
+    color: var(--body);
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  /* ---- Step indicator ---- */
+  .step-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 32px 0 40px;
+  }
+  .step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all .3s;
+  }
+  .step-dot.done { background: var(--blue) }
+  .step-dot.current {
+    width: 28px;
+    border-radius: 14px;
+    background: var(--blue);
+  }
+  .step-line { width: 20px; height: 1px; background: var(--border) }
+
+  /* ---- Steps ---- */
+  .step {
+    display: none;
+    animation: fadeUp .45s cubic-bezier(.22,1,.36,1) both;
+    padding-bottom: 80px;
+  }
+  .step.active { display: block }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px) }
+    to { opacity: 1; transform: translateY(0) }
+  }
+
+  .step-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .step h2 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(1.4rem, 3.5vw, 2rem);
+    font-weight: 900;
+    color: var(--ink);
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .step .intro {
+    font-size: 15px;
+    color: var(--body);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+
+  /* ---- Card container ---- */
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: clamp(24px, 5vw, 40px);
+    box-shadow: var(--shadow);
+  }
+
+  /* ---- Form fields ---- */
+  .fields { display: flex; flex-direction: column; gap: 18px }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 520px) { .field-row { grid-template-columns: 1fr } }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .field .hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 5px;
+  }
+
+  .input-wrap {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    transition: border-color .15s;
+    overflow: hidden;
+  }
+  .input-wrap:focus-within { border-color: var(--blue) }
+  .input-wrap input {
+    flex: 1;
+    border: 0;
+    outline: 0;
+    padding: 11px 14px;
+    font-size: 15px;
+    font-family: inherit;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    background: transparent;
+    width: 100%;
+  }
+  .input-wrap input::placeholder { color: #c4c4c4 }
+  .input-wrap .suffix {
+    padding: 0 14px;
+    color: var(--muted);
+    font-size: 13px;
+    border-left: 1px solid var(--border);
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+    background: var(--bg-alt);
+    white-space: nowrap;
+  }
+
+  /* ---- Cost selector ---- */
+  .cost-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 520px) { .cost-options { grid-template-columns: 1fr } }
+
+  .cost-card {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all .2s;
+    text-align: center;
+    background: #fff;
+  }
+  .cost-card:hover {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 1px var(--blue);
+  }
+  .cost-card.selected {
+    border-color: var(--blue);
+    background: var(--blue-light);
+    box-shadow: 0 0 0 1px var(--blue);
+  }
+  .cost-card .cost-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .cost-card .cost-range {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--blue);
+    margin-bottom: 8px;
+  }
+  .cost-card .cost-desc {
+    font-size: 12px;
+    color: var(--body);
+    line-height: 1.5;
+  }
+
+  .custom-cost {
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .unsure-box {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 14px;
+    background: var(--blue-light);
+    border: 1px solid #dbe4ff;
+    text-align: center;
+  }
+  .unsure-box p {
+    font-size: 14px;
+    color: var(--body);
+    margin-bottom: 10px;
+  }
+  .unsure-box a {
+    color: var(--blue);
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color .2s;
+  }
+  .unsure-box a:hover { color: var(--blue-dark) }
+
+  /* ---- Buttons ---- */
+  .nav-btns {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 36px;
+    gap: 12px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all .2s;
+    border: 1.5px solid var(--border);
+    background: #fff;
+    color: var(--ink);
+  }
+  .btn:hover {
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+  }
+  .btn-primary {
+    background: var(--blue);
+    color: #fff;
+    border-color: var(--blue);
+    box-shadow: 0 2px 12px rgba(59,91,219,.25);
+  }
+  .btn-primary:hover {
+    background: var(--blue-dark);
+    border-color: var(--blue-dark);
+    transform: translateY(-1px);
+  }
+  .btn-ghost {
+    border-color: transparent;
+    background: transparent;
+    color: var(--muted);
+  }
+  .btn-ghost:hover { color: var(--ink); background: var(--bg-alt) }
+
+  /* ---- Projection (step 2) ---- */
+  .proj-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 520px) { .proj-grid { grid-template-columns: 1fr } }
+
+  .proj-card {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    background: #fff;
+  }
+  .proj-card .proj-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .proj-card .proj-value {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .proj-card .proj-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .proj-summary {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+    background: var(--blue-light);
+  }
+  .proj-summary .proj-value {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 32px;
+    font-weight: 900;
+  }
+  .proj-summary .proj-label {
+    font-size: 13px;
+    color: var(--body);
+    margin-top: 4px;
+  }
+
+  /* ---- Verdict (step 4) ---- */
+  .verdict-box {
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .verdict-box.green { background: var(--green-bg); border: 1px solid var(--green-border) }
+  .verdict-box.orange { background: var(--orange-bg); border: 1px solid var(--orange-border) }
+  .verdict-box.red { background: var(--red-bg); border: 1px solid var(--red-border) }
+
+  .verdict-icon { font-size: 36px; margin-bottom: 12px }
+  .verdict-title {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 22px;
+    font-weight: 900;
+    margin-bottom: 8px;
+    color: var(--ink);
+  }
+  .verdict-desc {
+    font-size: 14px;
+    color: var(--body);
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .result-kpis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 520px) { .result-kpis { grid-template-columns: 1fr } }
+
+  .r-kpi {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px;
+    text-align: center;
+    background: #fff;
+  }
+  .r-kpi .r-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .r-kpi .r-value {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--ink);
+  }
+  .r-kpi .r-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 3px;
+  }
+
+  /* ---- Timeline bar ---- */
+  .timeline-section { margin-bottom: 28px }
+  .timeline-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+  .timeline-bar-wrap {
+    position: relative;
+    height: 36px;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: visible;
+  }
+  .timeline-fill {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    border-radius: 10px 0 0 10px;
+    transition: width .6s cubic-bezier(.22,1,.36,1);
+  }
+  .timeline-fill.green { background: rgba(22,163,74,.1) }
+  .timeline-fill.orange { background: rgba(232,121,12,.1) }
+  .timeline-fill.red { background: rgba(224,49,49,.1) }
+
+  .timeline-marker {
+    position: absolute;
+    top: -4px; bottom: -4px;
+    width: 3px;
+    border-radius: 2px;
+    transition: left .6s cubic-bezier(.22,1,.36,1);
+  }
+  .timeline-marker.green { background: var(--green) }
+  .timeline-marker.orange { background: var(--orange) }
+  .timeline-marker.red { background: var(--red) }
+
+  .timeline-marker-label {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    padding: 3px 10px;
+    border-radius: 6px;
+  }
+  .timeline-marker-label.green { color: var(--green); background: var(--green-bg); border: 1px solid var(--green-border) }
+  .timeline-marker-label.orange { color: #92400e; background: var(--orange-bg); border: 1px solid var(--orange-border) }
+  .timeline-marker-label.red { color: var(--red); background: var(--red-bg); border: 1px solid var(--red-border) }
+
+  .timeline-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ---- Verdict rule box ---- */
+  .rule-box {
+    padding: 16px;
+    background: var(--bg-alt);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--body);
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .rule-box strong { color: var(--ink) }
+
+  /* ---- Actions ---- */
+  .result-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  /* ---- Formula ---- */
+  .formula-toggle {
+    text-align: center;
+    margin-top: 24px;
+  }
+  .formula-toggle button {
+    background: transparent;
+    border: 0;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 12px;
+    font-family: inherit;
+    transition: color .2s;
+  }
+  .formula-toggle button:hover { color: var(--ink) }
+
+  .formula-panel {
+    display: none;
+    margin-top: 20px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--bg-alt);
+  }
+  .formula-panel.open { display: block }
+  .formula-text {
+    font-size: 13px;
+    color: var(--body);
+    line-height: 1.9;
+  }
+  .formula-text code {
+    background: #fff;
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 12px;
+    color: var(--ink);
+  }
+  .formula-text strong { color: var(--ink) }
+
+  /* ---- Footer ---- */
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 32px 24px;
+    border-top: 1px solid var(--border);
+  }
+  footer a {
+    color: var(--blue);
+    font-weight: 600;
+  }
+  footer a:hover { text-decoration: underline }
+
+  /* ---- Toast ---- */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(16px);
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    transition: all .25s;
+    pointer-events: none;
+    z-index: 100;
+    box-shadow: var(--shadow);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0) }
+</style>
+</head>
+<body>
+
+  <!-- ---- Top bar ---- -->
+  <div class="top-bar">
+    <div class="top-bar-inner">
+      <a href="/" class="brand">
+        <img src="/logo_shorai.png" alt="shōrAI" onerror="this.style.display='none'" />
+        <span>shōrAI</span>
+      </a>
+      <a href="/" class="back-link">← Retour au site</a>
+    </div>
+  </div>
+
+  <!-- ---- Hero ---- -->
+  <div class="hero">
+    <div class="wrap">
+      <div class="hero-badge"><span class="dot"></span> Outil gratuit · Résultat instantané</div>
+      <h1>Le test de la <span class="grad-text serif" style="font-style:italic">serviette</span></h1>
+      <p>Une heuristique simple pour savoir si une automatisation vaut le coup, avant d'investir le moindre euro.</p>
+    </div>
+  </div>
+
+  <!-- ---- Step indicator ---- -->
+  <div class="wrap">
+    <div class="step-nav" id="stepNav">
+      <div class="step-dot current" data-step="1"></div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="2"></div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="3"></div>
+      <div class="step-line"></div>
+      <div class="step-dot" data-step="4"></div>
+    </div>
+
+    <!-- ==================== STEP 1 : La tâche ==================== -->
+    <div class="step active" id="step1">
+      <div class="step-label">Étape 1 sur 4</div>
+      <h2>Décrivez la tâche à automatiser</h2>
+      <p class="intro">Pensez à une tâche répétitive que vous ou votre équipe effectuez régulièrement.</p>
+
+      <div class="card">
+        <div class="fields">
+          <div class="field">
+            <label>Quelle tâche souhaitez-vous automatiser ?</label>
+            <div class="input-wrap">
+              <input id="taskName" type="text" placeholder="Ex : Saisie de factures, relance clients, reporting…" />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Temps par occurrence</label>
+              <div class="input-wrap">
+                <input id="minutes" type="number" min="1" step="1" value="15" />
+                <span class="suffix">minutes</span>
+              </div>
+              <div class="hint">Chaque fois que la tâche est effectuée</div>
+            </div>
+            <div class="field">
+              <label>Fréquence</label>
+              <div class="input-wrap">
+                <input id="frequency" type="number" min="1" step="1" value="5" />
+                <span class="suffix">fois / sem.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label>Personnes impliquées</label>
+              <div class="input-wrap">
+                <input id="people" type="number" min="1" step="1" value="2" />
+                <span class="suffix">personnes</span>
+              </div>
+              <div class="hint">Combien font cette tâche ?</div>
+            </div>
+            <div class="field">
+              <label>Coût horaire chargé</label>
+              <div class="input-wrap">
+                <input id="hourly" type="number" min="1" step="1" value="50" />
+                <span class="suffix">€ / h</span>
+              </div>
+              <div class="hint">50 € est une bonne moyenne</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <div></div>
+        <button class="btn btn-primary" onclick="goStep(2)">Voir ce que ça représente →</button>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 2 : Projection ==================== -->
+    <div class="step" id="step2">
+      <div class="step-label">Étape 2 sur 4</div>
+      <h2>Ce que vous pourriez <span class="grad-text serif" style="font-style:italic">gagner</span></h2>
+      <p class="intro">Si cette tâche était automatisée demain, voici le temps et l'argent que votre équipe récupérerait.</p>
+
+      <div class="proj-grid">
+        <div class="proj-card">
+          <div class="proj-label">Temps libéré / semaine</div>
+          <div class="proj-value" id="projTime">-</div>
+          <div class="proj-sub" id="projTimeSub">heures récupérées</div>
+        </div>
+        <div class="proj-card">
+          <div class="proj-label">Équivalent € / semaine</div>
+          <div class="proj-value" id="projMoney">-</div>
+          <div class="proj-sub">valorisé au coût horaire</div>
+        </div>
+      </div>
+
+      <div class="proj-summary">
+        <div class="proj-label" style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--body);margin-bottom:8px">Gain potentiel sur 12 mois</div>
+        <div class="proj-value grad-text" id="projYear">-</div>
+        <div class="proj-label" style="margin-top:6px;font-size:13px;color:var(--body)">si la tâche disparaît entièrement</div>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn btn-ghost" onclick="goStep(1)">← Modifier</button>
+        <button class="btn btn-primary" onclick="goStep(3)">Estimer le coût →</button>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 3 : Coût ==================== -->
+    <div class="step" id="step3">
+      <div class="step-label">Étape 3 sur 4</div>
+      <h2>Combien coûte l'<span class="grad-text serif" style="font-style:italic">automatisation</span> ?</h2>
+      <p class="intro">Choisissez un niveau de complexité ou entrez un montant personnalisé.</p>
+
+      <div class="card">
+        <div class="cost-options">
+          <div class="cost-card" data-cost="3500" onclick="selectCost(this, 3500)">
+            <div class="cost-title">Simple</div>
+            <div class="cost-range">2 – 5 k€</div>
+            <div class="cost-desc">Script, Zapier, automatisation d'un outil existant</div>
+          </div>
+          <div class="cost-card selected" data-cost="10000" onclick="selectCost(this, 10000)">
+            <div class="cost-title">Moyen</div>
+            <div class="cost-range">5 – 15 k€</div>
+            <div class="cost-desc">Workflow multi-outils, intégration API, dashboard</div>
+          </div>
+          <div class="cost-card" data-cost="25000" onclick="selectCost(this, 25000)">
+            <div class="cost-title">Complexe</div>
+            <div class="cost-range">15 – 40 k€</div>
+            <div class="cost-desc">Plateforme sur mesure, IA custom, refonte process</div>
+          </div>
+        </div>
+
+        <div class="custom-cost">
+          <div class="field">
+            <label>Ou entrez un montant précis</label>
+            <div class="input-wrap">
+              <input id="buildCost" type="number" min="0" step="500" value="10000" />
+              <span class="suffix">€</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="unsure-box">
+        <p>Pas sûr du coût ? Pas de problème.</p>
+        <a href="https://calendar.app.google/Mib5EFdjDi21g46s8" target="_blank" rel="noopener">Obtenez une estimation en 30 min →</a>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn btn-ghost" onclick="goStep(2)">← Retour</button>
+        <button class="btn btn-primary" onclick="goStep(4)">Voir le verdict →</button>
+      </div>
+    </div>
+
+    <!-- ==================== STEP 4 : Verdict ==================== -->
+    <div class="step" id="step4">
+      <div class="step-label">Résultat</div>
+      <h2 id="verdictTaskName">Votre <span class="grad-text serif" style="font-style:italic">verdict</span></h2>
+
+      <div id="verdictBox" class="verdict-box green">
+        <div class="verdict-icon" id="verdictIcon">✓</div>
+        <div class="verdict-title" id="verdictTitle">-</div>
+        <div class="verdict-desc" id="verdictDesc">-</div>
+      </div>
+
+      <div class="result-kpis">
+        <div class="r-kpi">
+          <div class="r-label">Gain net / semaine</div>
+          <div class="r-value" id="rGainWeek">-</div>
+        </div>
+        <div class="r-kpi">
+          <div class="r-label">Payback</div>
+          <div class="r-value" id="rPayback">-</div>
+          <div class="r-sub" id="rPaybackSub">-</div>
+        </div>
+        <div class="r-kpi">
+          <div class="r-label">Gain net à 12 mois</div>
+          <div class="r-value" id="rNet12">-</div>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="timeline-section">
+        <div class="timeline-title">Visualisation du payback</div>
+        <div style="position:relative;padding-top:30px">
+          <div class="timeline-bar-wrap">
+            <div class="timeline-fill" id="tlFill"></div>
+            <div class="timeline-marker" id="tlMarker">
+              <div class="timeline-marker-label" id="tlLabel">-</div>
+            </div>
+          </div>
+          <div class="timeline-labels">
+            <span>Aujourd'hui</span>
+            <span>6 mois</span>
+            <span>12 mois</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rule-box">
+        <strong>Règle de la serviette</strong> : vert ≤ 12 sem. · orange 13–26 sem. · rouge > 26 sem.
+      </div>
+
+      <div class="result-actions">
+        <button class="btn" onclick="copySummary()">Copier le résumé</button>
+        <button class="btn" onclick="goStep(1)">Tester une autre tâche</button>
+        <a href="https://calendar.app.google/Mib5EFdjDi21g46s8" target="_blank" rel="noopener" class="btn btn-primary" style="text-decoration:none">Discuter avec shōrAI →</a>
+      </div>
+
+      <div class="formula-toggle">
+        <button onclick="toggleFormula()">Voir la formule complète ↓</button>
+      </div>
+      <div class="formula-panel" id="formulaPanel">
+        <div class="formula-text">
+          <strong>Gain brut hebdo</strong> = <code>(minutes / 60) × fréquence × personnes × coût horaire</code><br><br>
+          <strong>Payback</strong> = <code>coût de build / gain hebdo</code> (en semaines)<br><br>
+          <strong>Gain net à 12 mois</strong> = <code>(gain hebdo × 52) − coût de build</code><br><br>
+          <strong>Verdict</strong> : payback ≤ 12 sem. → Go · 13–26 sem. → À discuter · > 26 sem. → Stop<br><br>
+          <strong>Limites</strong> : ce calcul ignore le coût de change management, le risque d'exécution (dépassement de budget) et le coût d'opportunité. C'est un indicateur rapide, pas un business plan.
+        </div>
+      </div>
+
+      <div class="nav-btns" style="margin-top:24px">
+        <button class="btn btn-ghost" onclick="goStep(3)">← Modifier le coût</button>
+        <div></div>
+      </div>
+    </div>
+
+    <footer>
+      Test de la serviette · <a href="/">shōrAI Consulting</a> · une heuristique simple pour ne pas investir dans ce qui ne le mérite pas.
+    </footer>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const fmt = (n, d = 0) => isFinite(n)
+    ? n.toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d })
+    : '-';
+  const fmtEUR = n => isFinite(n)
+    ? n.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
+    : '-';
+
+  let currentStep = 1;
+  let selectedBuildCost = 10000;
+
+  /* ---- Step navigation ---- */
+  window.goStep = function (n) {
+    currentStep = n;
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    $('step' + n).classList.add('active');
+
+    document.querySelectorAll('.step-dot').forEach(dot => {
+      const s = +dot.dataset.step;
+      dot.classList.remove('done', 'current');
+      if (s < n) dot.classList.add('done');
+      else if (s === n) dot.classList.add('current');
+    });
+
+    if (n === 2) computeProjection();
+    if (n === 4) computeVerdict();
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  /* ---- Cost selection ---- */
+  window.selectCost = function (el, cost) {
+    document.querySelectorAll('.cost-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedBuildCost = cost;
+    $('buildCost').value = cost;
+  };
+
+  $('buildCost').addEventListener('input', function () {
+    selectedBuildCost = +this.value || 0;
+    document.querySelectorAll('.cost-card').forEach(c => c.classList.remove('selected'));
+  });
+
+  /* ---- Read inputs ---- */
+  function readInputs() {
+    return {
+      taskName: $('taskName').value || 'Tâche non nommée',
+      minutes: +$('minutes').value || 0,
+      frequency: +$('frequency').value || 0,
+      people: +$('people').value || 0,
+      hourly: +$('hourly').value || 0,
+      build: +$('buildCost').value || 0
+    };
+  }
+
+  /* ---- Step 2 : Projection ---- */
+  function computeProjection() {
+    const p = readInputs();
+    const hoursWeek = (p.minutes / 60) * p.frequency * p.people;
+    const euroWeek = hoursWeek * p.hourly;
+    const euroYear = euroWeek * 52;
+
+    $('projTime').textContent = fmt(hoursWeek, 1) + ' h';
+    $('projTimeSub').textContent = p.people > 1
+      ? `cumulées sur ${p.people} personnes`
+      : 'récupérées chaque semaine';
+    $('projMoney').textContent = fmtEUR(euroWeek);
+    $('projYear').textContent = fmtEUR(euroYear);
+  }
+
+  /* ---- Step 4 : Verdict ---- */
+  function computeVerdict() {
+    const p = readInputs();
+    const grossWeek = (p.minutes / 60) * p.frequency * p.people * p.hourly;
+    const paybackWeeks = grossWeek > 0 ? p.build / grossWeek : Infinity;
+    const net12 = grossWeek * 52 - p.build;
+
+    let verdict, icon, title, desc;
+
+    if (grossWeek <= 0) {
+      verdict = 'red'; icon = '✕'; title = 'Stop';
+      desc = 'Pas de gain identifiable. Vérifiez vos paramètres ou repensez la tâche à automatiser.';
+    } else if (paybackWeeks <= 12) {
+      verdict = 'green'; icon = '✓'; title = 'Go, rentable rapidement';
+      desc = `Investissement rentabilisé en ${fmt(paybackWeeks, 1)} semaines (${fmt(paybackWeeks / 4.33, 1)} mois). Le risque est faible, foncez.`;
+    } else if (paybackWeeks <= 26) {
+      verdict = 'orange'; icon = '⚠'; title = 'À discuter';
+      desc = `Rentabilisé en ${fmt(paybackWeeks, 1)} semaines (${fmt(paybackWeeks / 4.33, 1)} mois). Raisonnable si le process est stable, mais à valider avec les parties prenantes.`;
+    } else {
+      verdict = 'red'; icon = '✕'; title = 'Probablement pas';
+      desc = `Payback de ${fmt(paybackWeeks, 1)} semaines (${fmt(paybackWeeks / 4.33, 1)} mois). Trop long pour être fiable. Le process aura probablement changé d'ici là.`;
+    }
+
+    const name = p.taskName !== 'Tâche non nommée'
+      ? `« ${p.taskName} »`
+      : 'Votre <span class="grad-text serif" style="font-style:italic">verdict</span>';
+    $('verdictTaskName').innerHTML = name;
+
+    const vb = $('verdictBox');
+    vb.classList.remove('green', 'orange', 'red');
+    vb.classList.add(verdict);
+    $('verdictIcon').textContent = icon;
+    $('verdictTitle').textContent = title;
+    $('verdictDesc').textContent = desc;
+
+    $('rGainWeek').textContent = fmtEUR(grossWeek);
+    $('rPayback').textContent = isFinite(paybackWeeks) ? fmt(paybackWeeks, 1) + ' sem.' : '∞';
+    $('rPaybackSub').textContent = isFinite(paybackWeeks) ? `≈ ${fmt(paybackWeeks / 4.33, 1)} mois` : 'jamais rentabilisé';
+    $('rNet12').textContent = fmtEUR(net12);
+
+    drawTimeline(paybackWeeks, verdict);
+  }
+
+  /* ---- Timeline ---- */
+  function drawTimeline(paybackWeeks, verdict) {
+    const maxWeeks = 52;
+    const pct = Math.min(paybackWeeks / maxWeeks * 100, 100);
+
+    const fill = $('tlFill');
+    const marker = $('tlMarker');
+    const label = $('tlLabel');
+
+    fill.className = 'timeline-fill ' + verdict;
+    marker.className = 'timeline-marker ' + verdict;
+    label.className = 'timeline-marker-label ' + verdict;
+
+    if (!isFinite(paybackWeeks) || paybackWeeks > maxWeeks) {
+      fill.style.width = '100%';
+      marker.style.left = '97%';
+      label.textContent = '> 12 mois';
+    } else {
+      fill.style.width = pct + '%';
+      marker.style.left = Math.max(3, Math.min(pct, 95)) + '%';
+      label.textContent = fmt(paybackWeeks, 1) + ' sem.';
+    }
+  }
+
+  /* ---- Formula ---- */
+  window.toggleFormula = function () {
+    $('formulaPanel').classList.toggle('open');
+  };
+
+  /* ---- Copy ---- */
+  window.copySummary = function () {
+    const p = readInputs();
+    const grossWeek = (p.minutes / 60) * p.frequency * p.people * p.hourly;
+    const paybackWeeks = grossWeek > 0 ? p.build / grossWeek : Infinity;
+    const net12 = grossWeek * 52 - p.build;
+
+    const txt =
+`Test de la serviette · ${p.taskName}
+Tâche : ${p.minutes} min × ${p.frequency} fois/sem × ${p.people} personnes × ${p.hourly} €/h
+Gain hebdo : ${fmtEUR(grossWeek)}
+Coût de build : ${fmtEUR(p.build)}
+Payback : ${isFinite(paybackWeeks) ? fmt(paybackWeeks, 1) + ' semaines' : 'jamais'}
+Gain net à 12 mois : ${fmtEUR(net12)}
+· shōrAI Consulting · shorai-group.com`;
+
+    navigator.clipboard.writeText(txt).then(
+      () => toast('Résumé copié dans le presse-papier'),
+      () => toast('Impossible de copier')
+    );
+  };
+
+  /* ---- Toast ---- */
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+})();
+</script>
+</body>
+</html>
